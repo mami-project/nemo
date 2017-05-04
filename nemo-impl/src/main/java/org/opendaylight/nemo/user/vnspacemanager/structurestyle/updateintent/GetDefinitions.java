@@ -1,0 +1,326 @@
+/*
+ * Copyright (c) 2015 Huawei, Inc. and others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.nemo.user.vnspacemanager.structurestyle.updateintent;
+
+import com.google.common.base.Optional;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.generic.physical.network.rev151010.PhysicalNetwork;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.generic.physical.network.rev151010.physical.network.PhysicalHosts;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.generic.physical.network.rev151010.physical.network.physical.hosts.PhysicalHost;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.common.rev151010.*;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.engine.common.rev151010.PhysicalHostName;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.ConnectionDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.MatchItemDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.NodeDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.ConnectionPointDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.connection.definitions.ConnectionDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.connection.point.definitions.ConnectionPointDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.match.item.definitions.MatchItemDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.object.rev151010.node.definitions.NodeDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.user.intent.TemplateDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.user.intent.template.definitions.TemplateDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.operation.rev151010.ActionDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.operation.rev151010.ConditionParameterDefinitions;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.operation.rev151010.action.definitions.ActionDefinition;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.operation.rev151010.condition.parameter.definitions.ConditionParameterDefinition;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+/**
+ * Created by z00293636 on 2015/12/3.
+ */
+public class GetDefinitions {
+    private DataBroker dataBroker;
+    private List<NodeDefinition> nodeDefinitionList = null;
+    private List<ConnectionDefinition> connectionDefinitionsList = null;
+    private List<MatchItemDefinition> matchItemDefinitionList = null;
+    private List<ConditionParameterDefinition> conditionParameterDefinitionList = null;
+    private List<ActionDefinition> actionDefinitionList = null;
+    private List<PhysicalHost> physicalHostList = null;
+    private List<ConnectionPointDefinition> connectionPointDefinitionsList = null;
+    private List<TemplateDefinition> templateDefinitionsList = null;
+    private static final Logger LOG = LoggerFactory.getLogger(GetDefinitions.class);
+
+    public GetDefinitions(DataBroker dataBroker){
+        this.dataBroker = dataBroker;
+    }
+
+    public Map<NodeType, NodeDefinition> getNodeDefinition(){
+        fetchNodeDefinitions();
+        Map<NodeType, NodeDefinition> map = new HashMap<NodeType, NodeDefinition>();
+        if (nodeDefinitionList!=null){
+            for (NodeDefinition nodeDefinition : nodeDefinitionList){
+                map.put(nodeDefinition.getNodeType(),nodeDefinition);
+            }
+        }
+        return map;
+    }
+
+    public Map<MatchItemName, MatchItemDefinition> getMatchItemDefinition(){
+        fetchMatchItemDefinitions();
+        Map<MatchItemName, MatchItemDefinition> map = new HashMap<MatchItemName, MatchItemDefinition>();
+        if (matchItemDefinitionList != null){
+            for (MatchItemDefinition matchItemDefinition : matchItemDefinitionList){
+                map.put(matchItemDefinition.getMatchItemName(),matchItemDefinition);
+            }
+        }
+        return map;
+    }
+
+    public Map<ConnectionType, ConnectionDefinition> getConnectionDefinition(){
+        fetchConnectionDefinitionList();
+        Map<ConnectionType, ConnectionDefinition> map = new HashMap<ConnectionType, ConnectionDefinition>();
+        if (connectionDefinitionsList != null){
+            for (ConnectionDefinition connectionDefinition : connectionDefinitionsList){
+                map.put(connectionDefinition.getConnectionType(),connectionDefinition);
+            }
+        }
+        return map;
+    }
+
+    public Map<ActionName, ActionDefinition> getActionDefinition(){
+        fetchActionDefinitions();
+        Map<ActionName,ActionDefinition> map = new HashMap<ActionName, ActionDefinition>();
+        if (actionDefinitionList!=null){
+            for (ActionDefinition actionDefinition : actionDefinitionList){
+                map.put(actionDefinition.getActionName(),actionDefinition);
+            }
+        }
+        return map;
+    }
+
+    public Map<ParameterName, ConditionParameterDefinition> getConditionParameterDefinition(){
+        fetchConditionParaDefinitions();
+        Map<ParameterName, ConditionParameterDefinition> map = new HashMap<ParameterName, ConditionParameterDefinition>();
+        if (conditionParameterDefinitionList!=null){
+            for (ConditionParameterDefinition conditionParameterDefinition : conditionParameterDefinitionList){
+                map.put(conditionParameterDefinition.getParameterName(),conditionParameterDefinition);
+            }
+        }
+        return map;
+    }
+
+    public Map<PhysicalHostName, PhysicalHost> getPhysicalHost(){
+        fetchPhysicalHosts();
+        Map<PhysicalHostName, PhysicalHost> map = new HashMap<PhysicalHostName, PhysicalHost>();
+        if (physicalHostList!=null){
+            for (PhysicalHost physicalHost : physicalHostList){
+                map.put(physicalHost.getHostName(),physicalHost);
+            }
+        }
+        return map;
+    }
+
+    public Map<VnfdInterfaceName, ConnectionPointDefinition> getConnectionPointDefinition(){
+        fetchConnectionPointDefinitionList();
+        Map<VnfdInterfaceName, ConnectionPointDefinition> map = new HashMap<VnfdInterfaceName, ConnectionPointDefinition>();
+        if (connectionPointDefinitionsList != null){
+            for (ConnectionPointDefinition connectionPointDefinition : connectionPointDefinitionsList){
+                map.put(connectionPointDefinition.getVnfdInterfaceName(),connectionPointDefinition);
+            }
+        }
+        return map;
+    }
+
+   /* public Map<TemplateName, TemplateDefinition> getTemplateDefinition(){
+        fetchTemplateDefinitions();
+        Map<TemplateName, TemplateDefinition> map = new HashMap<TemplateName, TemplateDefinition>();
+        if (templateDefinitionsList!=null){
+            for (TemplateDefinition templateDefinition : templateDefinitionsList){
+                map.put(templateDefinition.getTemplateName(),templateDefinition);
+            }
+        }
+        return map;
+    }    */
+    
+    private void setNodeDefinitionsList(List<NodeDefinition> nodeDefinitiones){
+        this.nodeDefinitionList = nodeDefinitiones;
+    }
+
+    private void setMatchItemDefintionList(List<MatchItemDefinition> matchItemDefinitions){
+        this.matchItemDefinitionList = matchItemDefinitions;
+    }
+
+    private void setConnectionDefinitionsList(List<ConnectionDefinition> connectionDefinitions){
+        this.connectionDefinitionsList = connectionDefinitions;
+    }
+
+    private void setConditionParameterDefinitionList(List<ConditionParameterDefinition> conditionParameterDefinitions){
+        this.conditionParameterDefinitionList = conditionParameterDefinitions;
+    }
+
+    private void setActionDefinitionList(List<ActionDefinition> actionDefinitions){
+        this.actionDefinitionList = actionDefinitions;
+    }
+
+    private void setPhysicalHosts(List<PhysicalHost> physicalHosts){
+        this.physicalHostList = physicalHosts;
+    }
+
+    private void setConnectionPointDefinitionsList(List<ConnectionPointDefinition> connectionPointDefinitions){
+        this.connectionPointDefinitionsList = connectionPointDefinitions;
+    }
+
+    private void setTemplateDefinitionsList(List<TemplateDefinition> templateDefinitions){
+        this.templateDefinitionsList =templateDefinitions;
+    }
+    
+    private void fetchNodeDefinitions(){
+        InstanceIdentifier<NodeDefinitions> nodedefinitionId = InstanceIdentifier.builder(NodeDefinitions.class).build();
+        ListenableFuture<Optional<NodeDefinitions>> nodedefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, nodedefinitionId);
+        Futures.addCallback(nodedefinitionFuture, new FutureCallback<Optional<NodeDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<NodeDefinitions> result){
+                setNodeDefinitionsList(result.get().getNodeDefinition());
+            }
+            @Override
+            public void onFailure(Throwable t){
+                LOG.error("Can not read node definitions information.", t);
+            }
+        });
+        return ;
+    }
+
+    private void fetchConnectionDefinitionList(){
+        InstanceIdentifier<ConnectionDefinitions> connectiondefinitionId = InstanceIdentifier.builder(ConnectionDefinitions.class).build();
+        ListenableFuture<Optional<ConnectionDefinitions>> connectiondefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, connectiondefinitionId);
+        Futures.addCallback(connectiondefinitionFuture, new FutureCallback<Optional<ConnectionDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<ConnectionDefinitions> result) {
+                setConnectionDefinitionsList(result.get().getConnectionDefinition());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read connection definition information.", t);
+            }
+        });
+        return;
+    }
+
+    private void fetchMatchItemDefinitions(){
+        InstanceIdentifier<MatchItemDefinitions> matchitemdefinitionId = InstanceIdentifier.builder(MatchItemDefinitions.class).build();
+        ListenableFuture<Optional<MatchItemDefinitions>> matchitemdefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, matchitemdefinitionId);
+        Futures.addCallback(matchitemdefinitionFuture, new FutureCallback<Optional<MatchItemDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<MatchItemDefinitions> result) {
+                setMatchItemDefintionList(result.get().getMatchItemDefinition());
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read match item definition information.", t);
+            }
+        });
+        return ;
+    }
+
+    private void fetchActionDefinitions(){
+        InstanceIdentifier<ActionDefinitions> actiondefinitionId = InstanceIdentifier.builder(ActionDefinitions.class).build();
+        ListenableFuture<Optional<ActionDefinitions>> actiondefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, actiondefinitionId);
+        Futures.addCallback(actiondefinitionFuture, new FutureCallback<Optional<ActionDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<ActionDefinitions> result) {
+                setActionDefinitionList(result.get().getActionDefinition());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read action definition information.", t);
+            }
+        });
+        return ;
+    }
+
+    private void fetchConditionParaDefinitions(){
+        InstanceIdentifier<ConditionParameterDefinitions> conditionparadefinitionId = InstanceIdentifier.builder(ConditionParameterDefinitions.class).build();
+        ListenableFuture<Optional<ConditionParameterDefinitions>> conditionparadefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, conditionparadefinitionId);
+        Futures.addCallback(conditionparadefinitionFuture, new FutureCallback<Optional<ConditionParameterDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<ConditionParameterDefinitions> result) {
+                setConditionParameterDefinitionList(result.get().getConditionParameterDefinition());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read condition parameter definition information.", t);
+            }
+        });
+        try {
+            conditionparadefinitionFuture.get();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            LOG.error("Exception:",e);
+        } catch (ExecutionException e){
+            // TODO Auto-generated catch block
+            LOG.error("Exception:",e);
+        }
+        return ;
+    }
+
+    private void fetchPhysicalHosts(){
+        InstanceIdentifier<PhysicalHosts> physicalHostsInstanceIdentifier = InstanceIdentifier.builder(PhysicalNetwork.class).child(PhysicalHosts.class).build();
+        ListenableFuture<Optional<PhysicalHosts>> physicalHostsFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.OPERATIONAL, physicalHostsInstanceIdentifier);
+        Futures.addCallback(physicalHostsFuture, new FutureCallback<Optional<PhysicalHosts>>() {
+            @Override
+            public void onSuccess(Optional<PhysicalHosts> result) {
+                setPhysicalHosts(result.get().getPhysicalHost());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read physical hosts information.", t);
+            }
+        });
+        return ;
+    }
+
+    private void fetchConnectionPointDefinitionList(){
+        InstanceIdentifier<ConnectionPointDefinitions> connectionpointdefinitionId = InstanceIdentifier.builder(ConnectionPointDefinitions.class).build();
+        ListenableFuture<Optional<ConnectionPointDefinitions>> connectionpointdefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, connectionpointdefinitionId);
+        Futures.addCallback(connectionpointdefinitionFuture, new FutureCallback<Optional<ConnectionPointDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<ConnectionPointDefinitions> result) {
+                setConnectionPointDefinitionsList(result.get().getConnectionPointDefinition());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                LOG.error("Can not read connection definition information.", t);
+            }
+        });
+        return;
+    }
+
+
+/*       private void fetchTemplateDefinitions(){
+        InstanceIdentifier<TemplateDefinitions> templateDefinitionId = InstanceIdentifier.builder(TemplateDefinitions.class).build();
+        ListenableFuture<Optional<TemplateDefinitions>> templatedefinitionFuture = dataBroker.newReadOnlyTransaction().read(LogicalDatastoreType.CONFIGURATION, templateDefinitionId);
+        Futures.addCallback( templatedefinitionFuture, new FutureCallback<Optional<TemplateDefinitions>>() {
+            @Override
+            public void onSuccess(Optional<TemplateDefinitions> result){
+                setTemplateDefinitionsList(result.get().getTemplateDefinition());
+            }
+            @Override
+            public void onFailure(Throwable t){
+                LOG.error("Can not read template definitions information.", t);
+            }
+        });
+        return ;
+    }*/
+}
+
