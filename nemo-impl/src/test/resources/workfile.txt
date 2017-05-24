@@ -1,0 +1,7 @@
+CREATE NodeModel e VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/example2_28.yaml; ConnectionPoint data_inside at VNFD: xe1.dataplanevnf-vm; ConnectionPoint data_outside at VNFD: xe2.dataplanevnf1-vm;
+
+CREATE NodeModel f VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/dataplaneVNF_2VMs.yaml ; ConnectionPoint a at VNFD: xe1.gh; ConnectionPoint b at VNFD: xe2;
+
+CREATE NodeModel dmz1; Node sa3 Type e; Node sha3 Type f; ConnectionPoint inside at VNFD: q1.ds; ConnectionPoint output at VNFD: a1.we; Connection c1 Type p2p Endnodes inside, sa3.data_inside ; Connection c2 Type p2p Endnodes sa3.data_outside, sha3.a ; Connection c3 Type p2p Endnodes sha3.b, output;
+
+CREATE Node internet2 Type dmz1;

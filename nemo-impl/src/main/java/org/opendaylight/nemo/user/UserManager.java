@@ -34,6 +34,8 @@ import java.util.concurrent.Future;
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.CommonRpcResult.ResultCode.Error;
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.CommonRpcResult.ResultCode.Ok;
 
+import java.io.IOException;
+
 /**
  * Created by z00293636 on 2015/9/7.
  */
@@ -243,20 +245,25 @@ public class UserManager implements NemoIntentService {
     public Future<RpcResult<CreateVnfdOutput>> createVnfd(CreateVnfdInput input) {
 
         final CreateVnfdOutputBuilder outputBuilder = new CreateVnfdOutputBuilder();
-        //TBD
-        String errorInfo = null;
-        errorInfo = vnfdManager.generateVNFD(aaa, input);
-        if (errorInfo != null){
-            outputBuilder.setResultCode(Error).setMessage(errorInfo);
-            informresolver=false;
-            vnfdProcessing=true;
-        }
-        else{
-          
-            outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
-            vnfdProcessing=true;
-            informresolver=false;
+        try {
+		String errorInfo = null;
+		errorInfo = vnfdManager.generateVNFD(aaa, input);
+		if (errorInfo != null){
+		    outputBuilder.setResultCode(Error).setMessage(errorInfo);
+		    informresolver=false;
+		    vnfdProcessing=true;
+		}
+		else{
+		  
+		    outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+		    vnfdProcessing=true;
+		    informresolver=false;
 
+		}
+        }
+        catch (IOException e){
+            LOG.error("Exception:",e);
+            outputBuilder.setResultCode(Error).setMessage(e.getMessage());
         }
         return RpcResultBuilder.success(outputBuilder).buildFuture();
     }

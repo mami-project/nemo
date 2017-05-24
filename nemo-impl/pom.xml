@@ -27,14 +27,6 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>Sonatype-public</id>
-      <name>SnakeYAML repository</name>
-      <url>http://oss.sonatype.org/content/groups/public/</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.opendaylight.mdsal.model</groupId>
@@ -106,7 +98,8 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>1.19-SNAPSHOT</version>
+      <version>1.18</version>
+      <type>jar</type>
     </dependency>
   </dependencies>
 

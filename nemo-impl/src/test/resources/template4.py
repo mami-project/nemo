@@ -17,7 +17,7 @@ GENERATE_YAML="http://%s:8181/restconf/operations/nemo-intent:create-vnfd"
 def register_admin(contHost):
 	data={
 			"input":{
-					"user-id":"9196a94f-0020-40e0-997d-916d012145d3",
+					"user-id":"e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 					"user-name":"admin",
 					"user-password":"abcd",
 					"user-role":"admin"
@@ -28,7 +28,7 @@ def register_admin(contHost):
 def transaction_begin_admin(contHost):
 	data={
 			"input":{
-					"user-id":"9196a94f-0020-40e0-997d-916d012145d3"				
+					"user-id":"e6e1b898-05c0-488b-be7f-9af8b63b6db4"				
 					}
 		}
 	post(TRANSACTION_BEGIN % contHost, data)
@@ -36,7 +36,7 @@ def transaction_begin_admin(contHost):
 def transaction_end_admin(contHost):
 	data={
 			"input":{
-					"user-id":"9196a94f-0020-40e0-997d-916d012145d3"				
+					"user-id":"e6e1b898-05c0-488b-be7f-9af8b63b6db4"				
 					}
 		}
 	post(TRANSACTION_END % contHost, data)
@@ -44,7 +44,7 @@ def transaction_end_admin(contHost):
 def register_template_definition(contHost):
 	data={
 			"input":{
-			  "user-id": "9196a94f-0020-40e0-997d-916d012145d3",
+			  "user-id": "e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 			  "nemo-statement": 
 				"CREATE NodeModel sample_vnf Property string : vnfd-interface VNFD file://github.com/nfvlabs/openmano/blob/master/openmano/scenarios/examples/complex; ConnectionPoint data_inside at VNFD:vnfd-interface; ConnectionPoint data_outside at VNFD:ge1;"
 			}
@@ -54,7 +54,7 @@ def register_template_definition(contHost):
 def register_template_definition2(contHost):
 	data={
 			"input":{
-			  "user-id": "9196a94f-0020-40e0-997d-916d012145d3",
+			  "user-id": "e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 			  "nemo-statement": 
 				"CREATE NodeModel shaper_vnf VNFD file://github.com/nfvlabs/openmano/blob/master/openmano/scenarios/examples/complex ; ConnectionPoint a at VNFD:a1; ConnectionPoint b at VNFD:a2;"
 			}
@@ -92,9 +92,9 @@ def transaction_end(contHost):
 def add_dmz_node(contHost):
 	data={
 			"input":{				 
-				  "user-id": "9196a94f-0020-40e0-997d-916d012145d3",
+				  "user-id": "e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 				  "nemo-statement":
-					"CREATE NodeModel dmzer; Node hola3 Type sample_vnf Property vnfd-interface :ge1; Node sha3 Type shaper_vnf; ConnectionPoint inside at VNFD:q1; ConnectionPoint output at VNFD:a1; Connection c1 Type p2p Endnodes inside, sa3.data_inside ; Connection c2 Type p2p Endnodes sa3.data_outside, sha3.a ; Connection c3 Type p2p Endnodes sha3.b, output;"
+					"CREATE NodeModel dmzer; Node hola3 Type sample_vnf Property vnfd-interface :eth0-vnf_2vms-vm2; Node sha3 Type shaper_vnf; ConnectionPoint inside at VNFD:q1; ConnectionPoint output at VNFD:a1; Connection c1 Type p2p Endnodes inside, hola3.data_inside ; Connection c2 Type p2p Endnodes hola3.data_outside, sha3.a ; Connection c3 Type p2p Endnodes sh3.b, output;"
 				}
 		}
 	post(LANGUAGE_INTENT % contHost,data)
@@ -102,7 +102,7 @@ def add_dmz_node(contHost):
 def add_internet_node(contHost):
 	data={
 			"input":{				 
-				  "user-id": "9196a94f-0020-40e0-997d-916d012145d3",
+				  "user-id": "e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 				  "nemo-statement": "CREATE NodeModel internet VNFD file://github.com/nfvlabs/openmano/blob/master/openmano/scenarios/examples/complex.yaml; Node dmz1 Type dmzer; Node sha4 Type shaper_vnf; ConnectionPoint int_1 at VNFD:w1; ConnectionPoint int_2 at VNFD:b1; Connection ca1 Type p2p Endnodes int_1, dmz1.inside ; Connection ca2 Type p2p Endnodes dmz1.output, sha4.a; Connection ca3 Type p2p Endnodes sha4.b, int_2;"
 				}
 		}
@@ -111,7 +111,7 @@ def add_internet_node(contHost):
 def add_internet1_node(contHost):
 	data={
 			"input":{				 
-				  "user-id": "9196a94f-0020-40e0-997d-916d012145d3",
+				  "user-id": "e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 				  "nemo-statement":
 					"CREATE Node internet1 Type internet;"
 				}
@@ -121,7 +121,7 @@ def add_internet1_node(contHost):
 def create_yaml(contHost):
 	data={
 			"input":{
-					"user-id":"9196a94f-0020-40e0-997d-916d012145d3",
+					"user-id":"e6e1b898-05c0-488b-be7f-9af8b63b6db4",
 					"instance-name":"internet1"				
 					}
 		}

@@ -155,7 +155,7 @@ TOKEN :
 |   < #DIGIT: ["0" - "9"] >
 | < #LETTER: ["a" - "z"] >
 | < #UPLOWLETTER: ["a" - "z", "A"-"Z"] >
-| < #INNERURI: (<UPLOWLETTER> | <UPLOWLETTER>(<UPLOWLETTER> | <DIGIT> | <UNDERSCORE>|< JOINER >|< COLON >|< DOT >)*(<UPLOWLETTER> | <DIGIT>)+) > 
+| < #INNERURI: (<UPLOWLETTER> | <UPLOWLETTER>(<UPLOWLETTER> | <DIGIT> | <UNDERSCORE>|< JOINER >|< COLON >|< DOT >)*(<UPLOWLETTER> | <DIGIT>)*) > 
 }
 String NEMO(UserId userId, DataBroker dataBroker, TenantManage tenantManage ):
 {
@@ -823,11 +823,16 @@ String abstractConnectionPoint(UpdateTemplateDefinitionLang definition):
    }
   (
    <AT><VNFD><COLON>
-
-    extInterfaceName = < ID >
-   {
-    System.out.println(extInterfaceName.image);
-   }
+	(
+    extInterfaceName = < TEMPID >
+   	{
+    	System.out.println(extInterfaceName.image);
+   	}
+   | extInterfaceName = < ID >
+      {
+    	System.out.println(extInterfaceName.image);
+   		}
+ 	)
   )?
   <SEMICOLON>
   {

@@ -38,7 +38,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.int
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.user.intent.template.instances.TemplateInstanceKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
+import org.opendaylight.nemo.user.processingmanager.VNFDOperations;
+import org.opendaylight.nemo.user.processingmanager.VNFDGenerator;
 import java.util.*;
+import java.io.IOException;
+
 
 /**
  * Created by ebg on 2017/04/5.
@@ -46,16 +50,19 @@ import java.util.*;
 public class VNFDManager {
     
     private TenantManage tenantManage;
-
+    private VNFDOperations vnfdOperations;
+    private VNFDGenerator vnfdGenerator;
     public VNFDManager(DataBroker dataBroker, TenantManage tenantManage){
-    	this.tenantManage = tenantManage;
+        this.tenantManage = tenantManage;
+    vnfdOperations = new VNFDOperations();
+    vnfdGenerator = new VNFDGenerator();
 
     }
 
-    public String generateVNFD(AAA aaa, CreateVnfdInput createVnfdInput){
-    	String erroInfo = null;
-        String templateInstanceName=null;
-            
+    public String generateVNFD(AAA aaa, CreateVnfdInput createVnfdInput) throws IOException{
+        String erroInfo = null;
+        TemplateInstanceName instance=null;
+        
         Map<NodeId, Node> nodeMap = new HashMap<NodeId, Node>();
         Map<NodeId, Node> nodeDSMap = new HashMap<NodeId, Node>();
         Map<ConnectionId, Connection> connectionMap = new HashMap<ConnectionId, Connection>();
@@ -77,59 +84,110 @@ public class VNFDManager {
         else{
 
             
-            templateInstanceName = createVnfdInput.getInstanceName().getValue();
+            instance = createVnfdInput.getInstanceName();
 
-        	if(tenantManage.getNode(createVnfdInput.getUserId()) != null){
-        		nodeMap=tenantManage.getNode(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getNode(createVnfdInput.getUserId()) != null){
+                nodeMap=tenantManage.getNode(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getConnection(createVnfdInput.getUserId()) != null){
-        		connectionMap = tenantManage.getConnection(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getConnection(createVnfdInput.getUserId()) != null){
+                connectionMap = tenantManage.getConnection(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getConnectionPoint(createVnfdInput.getUserId()) != null){
-        		connectionPointMap = tenantManage.getConnectionPoint(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getConnectionPoint(createVnfdInput.getUserId()) != null){
+                connectionPointMap = tenantManage.getConnectionPoint(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getTempalteDefinition(createVnfdInput.getUserId()) != null){
-        		templateDefinitionMap = tenantManage.getTempalteDefinition(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getTempalteDefinition(createVnfdInput.getUserId()) != null){
+                templateDefinitionMap = tenantManage.getTempalteDefinition(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getTemplateInstance(createVnfdInput.getUserId()) != null){  
-        		templateInstanceMap = tenantManage.getTemplateInstance(createVnfdInput.getUserId());
+            if(tenantManage.getTemplateInstance(createVnfdInput.getUserId()) != null){  
+                templateInstanceMap = tenantManage.getTemplateInstance(createVnfdInput.getUserId());
 
-        	}
+            }
 
             if(tenantManage.getUserTemplateInstanceName(createVnfdInput.getUserId()) != null){
                 templateInstanceNameMap = tenantManage.getUserTemplateInstanceName(createVnfdInput.getUserId());
             }
 
-        	if(tenantManage.getNodeDataStore(createVnfdInput.getUserId()) != null ){
-        		nodeDSMap=tenantManage.getNodeDataStore(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getNodeDataStore(createVnfdInput.getUserId()) != null ){
+                nodeDSMap=tenantManage.getNodeDataStore(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getConnectionDataStore(createVnfdInput.getUserId()) != null ){
-        		connectionDSMap=tenantManage.getConnectionDataStore(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getConnectionDataStore(createVnfdInput.getUserId()) != null ){
+                connectionDSMap=tenantManage.getConnectionDataStore(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getConnectionPointDataStore(createVnfdInput.getUserId())!= null){
-        		connectionPointDSMap=tenantManage.getConnectionPointDataStore(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getConnectionPointDataStore(createVnfdInput.getUserId())!= null){
+                connectionPointDSMap=tenantManage.getConnectionPointDataStore(createVnfdInput.getUserId());
+            }
 
-        	if(tenantManage.getDefinitionDataStore(createVnfdInput.getUserId()) != null ){
-        		templateDefinitionDSMap=tenantManage.getDefinitionDataStore(createVnfdInput.getUserId());
-        	}
-        	
-        	if(tenantManage. getInstanceDataStore(createVnfdInput.getUserId()) != null){
-        		templateInstanceDSMap=tenantManage. getInstanceDataStore(createVnfdInput.getUserId());
-        	}
+            if(tenantManage.getDefinitionDataStore(createVnfdInput.getUserId()) != null ){
+                templateDefinitionDSMap=tenantManage.getDefinitionDataStore(createVnfdInput.getUserId());
+            }
+            
+            if(tenantManage. getInstanceDataStore(createVnfdInput.getUserId()) != null){
+                templateInstanceDSMap=tenantManage. getInstanceDataStore(createVnfdInput.getUserId());
+            }
 
             if(tenantManage.getInstanceNameDataStore(createVnfdInput.getUserId()) != null){
                 templateInstanceNameDSMap = tenantManage.getInstanceNameDataStore(createVnfdInput.getUserId());
             }
 
-        erroInfo = nodeDSMap+"\n"+connectionDSMap+"\n"+connectionPointDSMap+"\n"+templateDefinitionDSMap+"\n"+templateInstanceDSMap+"\n"+tenantManage.getUsers()+"\nTenant manage \n"+nodeMap+"\n"+connectionMap+"\n"+connectionPointMap+"\n"+templateDefinitionMap+"\n"+templateInstanceMap+"\n"+templateInstanceName;     	
-    	return erroInfo;
-    	}
-	}
+        //erroInfo = nodeDSMap+"\n"+connectionDSMap+"\n"+connectionPointDSMap+"\n"+templateDefinitionDSMap+"\n"+templateInstanceDSMap+"\n"+tenantManage.getUsers()+"\nTenant manage \n"+nodeMap+"\n"+connectionMap+"\n"+connectionPointMap+"\n"+templateDefinitionMap+"\n"+templateInstanceMap+"\n"+templateInstanceName; 
+vnfdOperations.setInstanceNodes(instance, nodeMap, nodeDSMap);
+            if (vnfdOperations.getInstanceNodes() != null) {
+                vnfdOperations.setNodeVnfUri(templateDefinitionMap, templateDefinitionDSMap,
+                vnfdOperations.getInstanceNodes(), instance.getValue());
+            }
+        
+            vnfdOperations.setConnectionConnPointsName(connectionMap, connectionDSMap, connectionPointMap, connectionPointDSMap);
+
+            vnfdOperations.setNodeVnfdInterfaces( connectionPointMap,connectionPointDSMap, instance);
+        Map<String, Map<String, String>> instanceNodeMap = new LinkedHashMap<String, Map<String,String>>();
+            instanceNodeMap = vnfdOperations.getInstanceNodes();
+            Map<String, String> nodeNameTypeMap = new HashMap<String, String>();
+            if (instanceNodeMap != null){
+                nodeNameTypeMap= instanceNodeMap.get(instance);
+            }
+            Map<String, String> nodeVnfUriMap = vnfdOperations.getNodeVnfUriMap();
+            if (nodeVnfUriMap != null){
+                for (String nodeName: nodeVnfUriMap.keySet()){
+                    String fileName = null;
+                    fileName = vnfdGenerator.readUrl(nodeVnfUriMap.get(nodeName));
+                    if (fileName != null){
+                        System.out.println("nodeName: "+nodeName);
+                        vnfdGenerator.readYAML(fileName, vnfdOperations.getNodeVnfdInterfaces(), nodeName);
+                    } 
+                }
+            } else{        
+                erroInfo= "There are not URIs defined in the NodeModels";
+                return erroInfo;
+            }
+            vnfdOperations.setConnPointVnfd(connectionPointMap,connectionPointDSMap);
+            if(vnfdOperations.getConnectionConnPointsName() != null){
+                vnfdGenerator.parseConnections(vnfdOperations.getConnectionConnPointsName(),  instance.getValue());
+            }else{
+                erroInfo="There has been a problem while matching the connections with their respective connectionPoints";
+            }
+            vnfdGenerator.setVnfc();
+            String templateDefinitionName=null;
+            TemplateInstance templateInstance =templateInstanceNameMap.get(instance);
+            templateDefinitionName= templateInstance.getTemplateName().getValue();
+            
+            if(vnfdOperations.getConnPointVnfdInterface() != null){
+            vnfdGenerator.setVnfdInternalConnections(vnfdOperations.getConnPointVnfdInterface(), instance.getValue(), templateDefinitionName);
+            vnfdGenerator.setVnfdExternalConnections(vnfdOperations.getConnPointVnfdInterface(), instance.getValue(),templateDefinitionName);
+            }else{
+                erroInfo="There has been a problem while matching the connectionPoints with their respective vnfd interfaces";
+            }
+            vnfdGenerator.generateVNFD(instance.getValue());
+            
+            vnfdGenerator.testDump();
+
+                    
+        return erroInfo;
+        }
+    }
 }
