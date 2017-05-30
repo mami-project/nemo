@@ -432,6 +432,13 @@ module nemo-intent {
 
             leaf instance-name {
                 type nemo-common:template-instance-name;
+                mandatory true;
+            }
+
+            leaf results-path {
+                type string;
+                mandatory true;
+
             }
         }
 

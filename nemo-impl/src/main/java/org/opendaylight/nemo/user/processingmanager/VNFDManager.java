@@ -62,7 +62,7 @@ public class VNFDManager {
     public String generateVNFD(AAA aaa, CreateVnfdInput createVnfdInput) throws IOException{
         String erroInfo = null;
         TemplateInstanceName instance=null;
-        
+        String results_path=null;
         Map<NodeId, Node> nodeMap = new HashMap<NodeId, Node>();
         Map<NodeId, Node> nodeDSMap = new HashMap<NodeId, Node>();
         Map<ConnectionId, Connection> connectionMap = new HashMap<ConnectionId, Connection>();
@@ -85,7 +85,7 @@ public class VNFDManager {
 
             
             instance = createVnfdInput.getInstanceName();
-
+            results_path = createVnfdInput.getResultsPath();
             if(tenantManage.getNode(createVnfdInput.getUserId()) != null){
                 nodeMap=tenantManage.getNode(createVnfdInput.getUserId());
             }
@@ -136,7 +136,20 @@ public class VNFDManager {
             }
 
         //erroInfo = nodeDSMap+"\n"+connectionDSMap+"\n"+connectionPointDSMap+"\n"+templateDefinitionDSMap+"\n"+templateInstanceDSMap+"\n"+tenantManage.getUsers()+"\nTenant manage \n"+nodeMap+"\n"+connectionMap+"\n"+connectionPointMap+"\n"+templateDefinitionMap+"\n"+templateInstanceMap+"\n"+templateInstanceName; 
-vnfdOperations.setInstanceNodes(instance, nodeMap, nodeDSMap);
+            vnfdOperations.clear_vnfdOperations();
+	    vnfdGenerator.clear_vnfdGenerator();
+	    String templateDefinitionName=null;
+            TemplateInstance templateInstance =templateInstanceNameMap.get(instance);
+            TemplateInstance templateInstanceDS = templateInstanceNameDSMap.get(instance);
+            if(templateInstance != null){
+            templateDefinitionName= templateInstance.getTemplateName().getValue();
+            }else if (templateInstanceDS != null){
+                    templateDefinitionName= templateInstanceDS.getTemplateName().getValue();
+            }else{
+                erroInfo = "The instance name has not been defined";
+                return erroInfo;
+            }
+            vnfdOperations.setInstanceNodes(instance, nodeMap, nodeDSMap);
             if (vnfdOperations.getInstanceNodes() != null) {
                 vnfdOperations.setNodeVnfUri(templateDefinitionMap, templateDefinitionDSMap,
                 vnfdOperations.getInstanceNodes(), instance.getValue());
@@ -172,19 +185,34 @@ vnfdOperations.setInstanceNodes(instance, nodeMap, nodeDSMap);
                 erroInfo="There has been a problem while matching the connections with their respective connectionPoints";
             }
             vnfdGenerator.setVnfc();
-            String templateDefinitionName=null;
-            TemplateInstance templateInstance =templateInstanceNameMap.get(instance);
-            templateDefinitionName= templateInstance.getTemplateName().getValue();
             
-            if(vnfdOperations.getConnPointVnfdInterface() != null){
-            vnfdGenerator.setVnfdInternalConnections(vnfdOperations.getConnPointVnfdInterface(), instance.getValue(), templateDefinitionName);
-            vnfdGenerator.setVnfdExternalConnections(vnfdOperations.getConnPointVnfdInterface(), instance.getValue(),templateDefinitionName);
+            
+            if (vnfdOperations.getConnPointVnfdInterface() != null) {
+                erroInfo = vnfdGenerator.setVnfdInternalConnections(vnfdOperations.getConnPointVnfdInterface(), instance.getValue(), templateDefinitionName);
+                if (erroInfo != null) {
+                     return erroInfo;
+                    //System.out.println(erroInfo);
+                } else {
+                    erroInfo = vnfdGenerator.setVnfdExternalConnections(vnfdOperations.getConnPointVnfdInterface(),
+                            instance.getValue(), templateDefinitionName);
+                    if (erroInfo != null) {
+                         return erroInfo;
+                        //System.out.println(erroInfo);
+                    } else {
+                        if(results_path != null){
+                            erroInfo = vnfdGenerator.generateVNFD(instance.getValue(), results_path);
+                        }
+                        else{
+                             erroInfo = "The results path has to be introduced";
+                            
+                        }
+                    }
+            
+                }
             }else{
                 erroInfo="There has been a problem while matching the connectionPoints with their respective vnfd interfaces";
             }
-            vnfdGenerator.generateVNFD(instance.getValue());
-            
-            vnfdGenerator.testDump();
+           
 
                     
         return erroInfo;

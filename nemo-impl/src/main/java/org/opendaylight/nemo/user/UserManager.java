@@ -24,7 +24,8 @@ import org.opendaylight.nemo.user.vnspacemanager.structurestyle.deleteintent.Del
 import org.opendaylight.nemo.user.vnspacemanager.structurestyle.updateintent.UpdateIntent;
 import org.opendaylight.nemo.user.processingmanager.VNFDManager;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.*;
-import org.opendaylight.nemo.user.processingmanager.VNFDManager;
+import org.opendaylight.nemo.user.processingmanager.VNFDOperations;
+import org.opendaylight.nemo.user.processingmanager.VNFDGenerator;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
@@ -54,6 +55,8 @@ public class UserManager implements NemoIntentService {
     private AdvancedQuery advancedQuery;
     private IntentResolver intentResolver;
     private VNFDManager vnfdManager;
+    private VNFDOperations vnfdOperations;
+    private VNFDGenerator vnfdGenerator;
 
     Boolean transaction;
     Boolean informresolver;
@@ -73,6 +76,8 @@ public class UserManager implements NemoIntentService {
         transactionBegin = new TransactionBegin();
         transactionEnd = new TransactionEnd();
         vnfdManager = new VNFDManager(dataBroker, tenantManage);
+        vnfdOperations = new VNFDOperations();
+        vnfdGenerator = new VNFDGenerator();
 
         transaction = false;
         informresolver = false;
@@ -148,6 +153,7 @@ public class UserManager implements NemoIntentService {
                         LOG.error("Exception:",e);
                     }
                 } else if (vnfdProcessing){
+                    vnfdProcessing=false;
                     tenantManage.transactionCleaning(input.getUserId());
                     outputBuilder.setResultCode(Ok).setMessage("The transaction ends.");
                 }
@@ -246,20 +252,23 @@ public class UserManager implements NemoIntentService {
 
         final CreateVnfdOutputBuilder outputBuilder = new CreateVnfdOutputBuilder();
         try {
-		String errorInfo = null;
-		errorInfo = vnfdManager.generateVNFD(aaa, input);
-		if (errorInfo != null){
-		    outputBuilder.setResultCode(Error).setMessage(errorInfo);
-		    informresolver=false;
-		    vnfdProcessing=true;
-		}
-		else{
-		  
-		    outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
-		    vnfdProcessing=true;
-		    informresolver=false;
+        String errorInfo = null;
+        errorInfo = vnfdManager.generateVNFD(aaa, input);
+        if (errorInfo != null){
+            vnfdOperations.clear_vnfdOperations();
+            vnfdGenerator.clear_vnfdGenerator();
+            outputBuilder.setResultCode(Error).setMessage(errorInfo);
+            informresolver=false;
+            vnfdProcessing=false;
+        }
+        else{
+            vnfdOperations.clear_vnfdOperations();
+            vnfdGenerator.clear_vnfdGenerator();
+            outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+            vnfdProcessing=true;
+            informresolver=false;
 
-		}
+        }
         }
         catch (IOException e){
             LOG.error("Exception:",e);

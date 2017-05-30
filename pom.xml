@@ -56,6 +56,14 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
       <organizationUrl>http://www.huawei.com</organizationUrl>
     </developer>
   </developers>
+  <dependencies>
+  <dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId>
+    <version>1.19-SNAPSHOT</version>
+    <scope>test</scope>
+  </dependency>
+  </dependencies>
 
   <scm>
     <connection>scm:git:ssh://git.opendaylight.org:29418/nemo.git</connection>

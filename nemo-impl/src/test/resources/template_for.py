@@ -75,11 +75,12 @@ def add_node(contHost):
 	post(LANGUAGE_INTENT % contHost,data)
 
 
-def create_yaml(contHost, instance):
+def create_yaml(contHost, instance, path):
 	data={
 			"input":{
 					"user-id":"af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-					"instance-name":instance				
+					"instance-name":instance,
+					"results-path":path				
 					}
 		}
 	post(GENERATE_YAML % contHost, data)
@@ -112,7 +113,8 @@ if __name__ == '__main__':
 		
 	try:
 		instance = raw_input("Introduce instance's name from which you want to generate the VNFD ")
-		create_yaml(args.controller,instance)
+		path = raw_input("Introduce the path where you want to save the result files ")
+		create_yaml(args.controller, instance, path)
 	except NameError: 
 		sys.exit("The instance's name: "+instance+" is not valid")
 

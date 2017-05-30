@@ -32,17 +32,31 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 public class VNFDOperations {
 
-	private Map<String, Map<String, String>> instanceNodeMap = new HashMap<String, Map<String, String>>(); // <nombreInstancia, <nombreNodo, tipoNodo>>
-	private Map<String, String> nodeVnfUriMap = new HashMap<String, String>(); // <NombreNodo, vnfUri>
-	private Map<String,LinkedList<String>> connectionConnPointMap = new HashMap<String, LinkedList<String>>(); // <nombreConnection , List<nombreConnPoints>>
-	private Map<String, List<String>> nodeVnfdInterfacesMap = new HashMap<String, List<String>>(); // <nombreNode, List<vnfInterfaceValue>>
-	private Map<String, String> connPointVnfdInterfaceMap = new HashMap<String, String>();
+	private Map<String, Map<String, String>> instanceNodeMap; // <nombreInstancia, <nombreNodo, tipoNodo>>
+	private Map<String, String> nodeVnfUriMap; // <NombreNodo, vnfUri>
+	private Map<String,LinkedList<String>> connectionConnPointMap; // <nombreConnection , List<nombreConnPoints>>
+	private Map<String, List<String>> nodeVnfdInterfacesMap; // <nombreNode, List<vnfInterfaceValue>>
+	private Map<String, String> connPointVnfdInterfaceMap;
+
+
 	public VNFDOperations() {
+		instanceNodeMap = new HashMap<String, Map<String, String>>();
+		nodeVnfUriMap = new HashMap<String, String>();
+		connectionConnPointMap = new HashMap<String, LinkedList<String>>();
+		nodeVnfdInterfacesMap = new HashMap<String, List<String>>();
+		connPointVnfdInterfaceMap = new HashMap<String, String>();
 
 	}
 
 	public void setInstanceNodes(TemplateInstanceName templateInstanceName, Map<NodeId, Node> nodeMap,
 			Map<NodeId, Node> nodeDSMap) {
+
+		System.out.println(instanceNodeMap);
+		System.out.println(nodeVnfUriMap);
+		System.out.println(connectionConnPointMap);
+		System.out.println(nodeVnfdInterfacesMap);
+		System.out.println(connPointVnfdInterfaceMap);
+
 		Map<String, Map<String, String>> templateNodeMap = new HashMap<String, Map<String, String>>();
 		Map<String, String> nodeTypeMap = new HashMap<String, String>();
 		String[] nodeNames = new String[2];
@@ -91,7 +105,7 @@ public class VNFDOperations {
 		//System.out.println(templateNodeMap);
 		templateNodeMap = replaceListValues(templateNodeMap, templateInstanceName.getValue());
 		instanceNodeMap = templateNodeMap;
-		//System.out.println("instanceNodeMap "+instanceNodeMap);
+		System.out.println("instanceNodeMap "+instanceNodeMap);
 
 	}
 
@@ -132,7 +146,7 @@ public class VNFDOperations {
 				}
 
 		}
-		//System.out.println("nodeVnfUriMAp "+nodeVnfUriMap);
+		System.out.println("nodeVnfUriMAp "+nodeVnfUriMap);
 	}
 
 	public Map<String, String> checkNodeVnfUri(Map<TemplateName, TemplateDefinition> templateDefinitionMap,
@@ -208,7 +222,7 @@ public class VNFDOperations {
 			
 		}
 		connectionConnPointMap= connectionsMap;
-		//System.out.println("ConnectionsMaps "+connectionConnPointMap);
+		System.out.println("ConnectionsMaps "+connectionConnPointMap);
 	}
 	
 	public Map<String, LinkedList<String>> getConnectionConnPointsName(){
@@ -236,7 +250,7 @@ public class VNFDOperations {
 		}
 		
 		connPointVnfdInterfaceMap= connPointVnfdInterface;
-		//System.out.println("connPointVnfdInterfaceMap "+connPointVnfdInterfaceMap);
+		System.out.println("connPointVnfdInterfaceMap "+connPointVnfdInterfaceMap);
 	}
 	
 	public Map<String, String> getConnPointVnfdInterface(){
@@ -306,6 +320,14 @@ public class VNFDOperations {
 		} else {
 			return null;
 		}
+	}
+
+	public void clear_vnfdOperations(){
+		instanceNodeMap.clear();
+		nodeVnfUriMap.clear();
+		connectionConnPointMap.clear();
+		nodeVnfdInterfacesMap.clear();
+		connPointVnfdInterfaceMap.clear();
 	}
 }
 

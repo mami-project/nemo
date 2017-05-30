@@ -139,7 +139,7 @@ public class UpdateTemplateDefinition {
                             for (EndNode endNode : endNodeList){
                                 
                                 if (!nodeMap.containsKey( new NodeId (endNode.getNodeId().getValue())) && !connectionPointMap.containsKey(new ConnectionPointId (endNode.getNodeId().getValue()))  && (checkEndNodeInstance(userId, endNode) != null)) {
-                                    return "The end node doesn't exist."+abstConnPointInstanceExist+" "+checkEndNodeInstance(userId, endNode)+connectionPointMap+ nodeMap+ endNode.getNodeId().getValue()+connectionPointMap.containsKey(new ConnectionPointId (endNode.getNodeId().getValue()));
+                                    return "The end node doesn't exist.";
                                 }
                             }
                         }
@@ -455,7 +455,7 @@ public class UpdateTemplateDefinition {
         }
 
         if (!endNode_connPointExist && !endNode_connPointExist1){
-            return "The endnode "+endNode+" does not exist (UpdateTemplateDefinition- checkConnectionInstance);"+endNode_connPointExist+" "+endNode_connPointExist1+" "+connectionPointMap;      
+            return "The endnode "+endNode+" does not exist (UpdateTemplateDefinition- checkConnectionInstance);";      
         }
     
         return null;

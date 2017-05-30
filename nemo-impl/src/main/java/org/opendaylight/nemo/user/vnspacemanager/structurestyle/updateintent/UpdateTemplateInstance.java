@@ -261,13 +261,15 @@ public class UpdateTemplateInstance {
                         ConnectionPointId connectionPointId = new ConnectionPointId(UUID.randomUUID().toString());
                         connectionPointBuilder.setKey(new ConnectionPointKey(connectionPointId)).setConnectionPointId(connectionPointId)
                                          .setConnectionPointName(new ConnectionPointName(instanceName + "." + abstractConnectionPoint.getConnectionPointName().getValue()));
-                        if(instaceParameterMap.containsKey(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue()))){
-                          if (instaceParameterMap.get(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue())).getStringValue()!=null){
-                            connectionPointBuilder.setVnfdInterfaceName(new VnfdInterfaceName (instaceParameterMap.get(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue())).getStringValue().get(0).getValue()));
-                          }
+                        if(abstractConnectionPoint.getVnfdInterfaceName() != null){
+                          if(instaceParameterMap.containsKey(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue()))){
+                            if (instaceParameterMap.get(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue())).getStringValue()!=null){
+                              connectionPointBuilder.setVnfdInterfaceName(new VnfdInterfaceName (instaceParameterMap.get(new ParameterName(abstractConnectionPoint.getVnfdInterfaceName().getValue())).getStringValue().get(0).getValue()));
+                            }
                                          
-                        }else{
-                          connectionPointBuilder.setVnfdInterfaceName(new VnfdInterfaceName (abstractConnectionPoint.getVnfdInterfaceName()));
+                          }else{
+                            connectionPointBuilder.setVnfdInterfaceName(new VnfdInterfaceName (abstractConnectionPoint.getVnfdInterfaceName()));
+                          }
                         }
                         abstractInstanceIdMap.put(abstractConnectionPoint.getConnectionPointId().getValue(),connectionPointId.getValue());
                         nameIdMap.put(abstractConnectionPoint.getConnectionPointName().getValue(),abstractConnectionPoint.getConnectionPointId().getValue());

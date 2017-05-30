@@ -813,6 +813,7 @@ String abstractConnectionPoint(UpdateTemplateDefinitionLang definition):
   String strReturn = null;
   Token connectionPointName = null;
   Token extInterfaceName = null;
+  String extInt=null;
   
 }
 {
@@ -826,17 +827,19 @@ String abstractConnectionPoint(UpdateTemplateDefinitionLang definition):
 	(
     extInterfaceName = < TEMPID >
    	{
+   	  	extInt=extInterfaceName.image;
     	System.out.println(extInterfaceName.image);
    	}
    | extInterfaceName = < ID >
       {
+        extInt=extInterfaceName.image;
     	System.out.println(extInterfaceName.image);
    		}
  	)
   )?
   <SEMICOLON>
   {
-  return definition.createAbstractConnectionPoint(connectionPointName.image, extInterfaceName.image);
+  return definition.createAbstractConnectionPoint(connectionPointName.image, extInt);
   }
 }
 

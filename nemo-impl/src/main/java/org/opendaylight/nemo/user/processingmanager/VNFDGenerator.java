@@ -32,10 +32,9 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-//import org.yaml.snakeyaml.DumperOptions;
-//import org.yaml.snakeyaml.Yaml;
-//import org.yaml.snakeyaml.nodes.Tag;
-import org.yaml.snakeyaml.*;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.Tag;
 
 public class VNFDGenerator {
 	static final List<String> PARAMS = Arrays.asList("name", "description", "internal-connections",
@@ -43,25 +42,39 @@ public class VNFDGenerator {
 	//individual YAMLs variables
 	private String name_value = null;
 	private String description_value = null;
-	private List<Map<String, String>> extConnValue = new ArrayList<Map<String, String>>(); // extracted from VNFD: external-connections
-	private List<Map<String, Object>> int_conn_value = new ArrayList<Map<String, Object>>(); // extracted  from VNFD: internal-connections
+	private List<Map<String, String>> extConnValue; // extracted from VNFD: external-connections
+	private List<Map<String, Object>> int_conn_value; // extracted  from VNFD: internal-connections
 	
 	//Auxiliary variables
-	private Map<String,Map<String, Map<String,String>>> nodeNameTypeConnPointMap = new HashMap<String,Map<String, Map<String,String>> >(); // <VNFDName, Map<localIfaceName, Map<"type",faceType// "vnfc", VNFC>>
-	private Map<String, List<Map<String, Object>>> nodeVnfcMap = new HashMap<String, List<Map<String, Object>>>(); // <VNFDName, Map<VNFC Extracted  from VNFD part>
-	private Map<String, String> nodeVnfdNameMap = new HashMap<String, String>(); // <nodeName, VNFDName>
-	private Map<String, List<String>> nodeVnfcNameMap = new HashMap<String, List<String>>(); // <nodeName, VNFCName>
-	private Map<String, List<String>> internalConnectionsMap = new HashMap<String, List<String>>(); // <connectionName,<connPointsNames>>
-	private Map<String, List<String>> externalConnectionsMap = new HashMap<String, List<String>>(); // <connectionName, <connPointsNames>>
-	private Map<String, List<Map<String, Object>>> nodeInternalConnMap = new HashMap<String, List<Map<String, Object>>>();
-	private Map<String, Map<String,String>> vmSubstituteMap = new HashMap<String, Map<String,String>>(); // <nodeName, Map<vnfcOldName, vnfcNewName>>
+	private Map<String,Map<String, Map<String,String>>> nodeNameTypeConnPointMap; // <VNFDName, Map<localIfaceName, Map<"type",faceType// "vnfc", VNFC>>
+	private Map<String, List<Map<String, Object>>> nodeVnfcMap; // <VNFDName, Map<VNFC Extracted  from VNFD part>
+	private Map<String, String> nodeVnfdNameMap; // <nodeName, VNFDName>
+	private Map<String, List<String>> nodeVnfcNameMap ; // <nodeName, VNFCName>
+	private Map<String, List<String>> internalConnectionsMap; // <connectionName,<connPointsNames>>
+	private Map<String, List<String>> externalConnectionsMap; // <connectionName, <connPointsNames>>
+	private Map<String, List<Map<String, Object>>> nodeInternalConnMap;
+	private Map<String, Map<String,String>> vmSubstituteMap; // <nodeName, Map<vnfcOldName, vnfcNewName>>
 	
 	//final yaml variables
-	private List<Map<String, Object>> vnfc = new ArrayList<Map<String, Object>>();
-	private List<Map<String, Object>> intConns = new LinkedList<Map<String,Object>>();
-	private List<Map<String, Object>> extConns = new LinkedList<Map<String,Object>>();
+	private List<Map<String, Object>> vnfc ;
+	private List<Map<String, Object>> intConns;
+	private List<Map<String, Object>> extConns;
 	
 	public VNFDGenerator() {
+		extConnValue = new ArrayList<Map<String, String>>(); 
+		int_conn_value = new ArrayList<Map<String, Object>>();
+		nodeNameTypeConnPointMap = new HashMap<String,Map<String, Map<String,String>> >();
+		nodeVnfcMap = new HashMap<String, List<Map<String, Object>>>();
+		nodeVnfdNameMap = new HashMap<String, String>();
+		nodeVnfcNameMap = new HashMap<String, List<String>>();
+		internalConnectionsMap = new HashMap<String, List<String>>();
+		externalConnectionsMap = new HashMap<String, List<String>>();
+		nodeInternalConnMap = new HashMap<String, List<Map<String, Object>>>();
+		vmSubstituteMap = new HashMap<String, Map<String,String>>();
+		vnfc = new ArrayList<Map<String, Object>>();
+		intConns = new LinkedList<Map<String,Object>>();
+		extConns = new LinkedList<Map<String,Object>>();
+
 	}
 
 	public String readUrl(String vnfUri) throws IOException {
@@ -78,6 +91,20 @@ public class VNFDGenerator {
 	//@SuppressWarnings("unchecked")
 	public void readYAML(String file, Map<String, List<String>> nodeVnfdInterfacesMap, String nodeName)
 			throws IOException {
+		
+		System.out.println("extConnValue: "+extConnValue);
+		System.out.println("int_conn_value"+int_conn_value);
+		System.out.println("nodeNameTypeConnPointMap"+nodeNameTypeConnPointMap);
+		System.out.println("nodeVnfcMap"+nodeVnfcMap);
+		System.out.println("nodeVnfdNameMap"+nodeVnfdNameMap);
+		System.out.println("nodeVnfcNameMap)"+nodeVnfcNameMap);
+		System.out.println("internalConnectionsMap"+internalConnectionsMap);
+		System.out.println("externalConnectionsMap"+externalConnectionsMap);
+		System.out.println("nodeInternalConnMap"+nodeInternalConnMap);
+		System.out.println("vmSubstituteMap"+vmSubstituteMap);
+		System.out.println("vnfc"+vnfc);
+		System.out.println("intConns"+intConns);
+		System.out.println("extConns"+extConns);
 
 		Map<String, Map<String,String>> nameTypeMap = new HashMap<String, Map<String,String>>();
 		InputStream input;
@@ -101,20 +128,20 @@ public class VNFDGenerator {
 							// //java.lang.String
 							name_value = (String) vnf.get(p);
 							nodeVnfdNameMap.put(nodeName, name_value);
-							//System.out.println(name_value);
-							//System.out.println(nodeVnfdNameMap);
+							System.out.println(name_value);
+							System.out.println(nodeVnfdNameMap);
 						}
 						if (p.contentEquals(PARAMS.get(1))) {
 							// System.out.println(vnf.get(p).getClass());//java.lang.String
 							description_value = (String) vnf.get(p);
-							//System.out.println(description_value);
+							System.out.println(description_value);
 						}
 						if (p.contentEquals(PARAMS.get(2))) {
 							// System.out.println(vnf.get(p).getClass());
 							// //class java.util.ArrayList
 							int_conn_value = (List<Map<String, Object>>) vnf.get(p);
 							nodeInternalConnMap.put(nodeName, int_conn_value);
-							//System.out.println("nodeInternalConnMap: " + nodeInternalConnMap);
+							System.out.println("nodeInternalConnMap: " + nodeInternalConnMap);
 						}
 						if (p.contentEquals(PARAMS.get(3))) {
 							// System.out.println(vnf.get(p).getClass());
@@ -123,7 +150,7 @@ public class VNFDGenerator {
 							nameTypeMap = externalConnections(extConnValue, name_value, nodeVnfdInterfacesMap,
 									nodeName);
 							nodeNameTypeConnPointMap.put(nodeName, nameTypeMap);
-							//System.out.println("nodeNameTypeConnPointMap "+nodeNameTypeConnPointMap);
+							System.out.println("nodeNameTypeConnPointMap "+nodeNameTypeConnPointMap);
 						}
 
 						if (p.contentEquals(PARAMS.get(4))) {
@@ -133,7 +160,7 @@ public class VNFDGenerator {
 							Map<String, Object> aux = new HashMap<String, Object>();
 							vnfcList = ((List<Map<String, Object>>) vnf.get(p));
 							nodeVnfcMap.put(nodeName, vnfcList);
-							//System.out.println("nodeVnfcMap: " + nodeVnfcMap);
+							System.out.println("nodeVnfcMap: " + nodeVnfcMap);
 							Iterator iterator = vnfcList.iterator();
 							List<String> vnfcNameList = new ArrayList<String>();
 							while (iterator.hasNext()) {
@@ -142,7 +169,7 @@ public class VNFDGenerator {
 							}
 
 							nodeVnfcNameMap.put(nodeName, vnfcNameList);
-							//System.out.println("nodeVnfcNameMap: " + nodeVnfcNameMap);
+							System.out.println("nodeVnfcNameMap: " + nodeVnfcNameMap);
 
 						}
 					}
@@ -158,39 +185,24 @@ public class VNFDGenerator {
 
 	}
 
-	public void testDump() {
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("name", "Silenthand Olleander");
-		data.put("race", "Human");
-		data.put("traits", new String[] { "ONE_HAND", "ONE_EYE" });
-		String[] array1 = new String[] {"a", "b"};
-		String[] array2 = new String[] {"a", "b"};
-		String[][] arrays = { array1, array2 };
-		data.put("array", arrays);
-	    DumperOptions options = new DumperOptions();
-	    options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
-	    Yaml yaml = new Yaml(options);
-		
-		String output = yaml.dump(data);
-		//System.out.println(output);
-	}
 
-	public void testDumpWriter(Object data, String instanceName) throws IOException {
-		/*
-		 * Map<String, Object> data = new HashMap<String, Object>();
-		 * data.put("name", "Silenthand Olleander"); data.put("race", "Human");
-		 * data.put("traits", new String[] { "ONE_HAND", "ONE_EYE" });
-		 */
+
+	public void dumpWriter(Object data, String instanceName, String results_path) throws IOException {
+
+	    
 	    DumperOptions options = new DumperOptions();
 	    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 	    options.setExplicitStart(true);
+		String path2 = System.getProperty("user.dir");
+		System.out.println(path2);
 	    Yaml yaml = new Yaml(options);
 		StringWriter writer = new StringWriter();
 		yaml.dump(data, writer);
-		//System.out.println(writer.toString());
-		FileWriter fw = new FileWriter(instanceName+".yaml");
+		System.out.println(writer.toString());
+		FileWriter fw = new FileWriter(new File(results_path, instanceName+".yaml"));
 		fw.write(writer.toString());
 		fw.close();
+	
 		
 	}
 
@@ -203,13 +215,26 @@ public class VNFDGenerator {
 				// System.out.println("vnfName coincide"+vnfName);
 				for (int i = 0; i < extConnValue.size(); i++) {
 					for (String interfaceNode : nodeVnfdInterfacesMap.get(node)) {
-						if (extConnValue.get(i).get("local_iface_name").equals(interfaceNode)) {
+						if (interfaceNode.split("\\.").length == 2) {
+							if (extConnValue.get(i).get("local_iface_name").equals(interfaceNode.split("\\.")[0]) && extConnValue.get(i).get("VNFC").toLowerCase().equals(interfaceNode.split("\\.")[1].toLowerCase())) {
+
+								Map<String, String> map = new HashMap<String, String>();
+								map.put("type", extConnValue.get(i).get("type"));
+								map.put("vnfc", extConnValue.get(i).get("VNFC"));
+
+								nameTypeMap.put(interfaceNode, map);
+							}
+						}
 							
-							Map<String,String> map = new HashMap<String, String>();
-							map.put("type",extConnValue.get(i).get("type"));
-							map.put("vnfc",extConnValue.get(i).get("VNFC"));
-							
-							nameTypeMap.put(interfaceNode, map);
+						else {
+							if (extConnValue.get(i).get("local_iface_name").equals(interfaceNode)) {
+
+								Map<String, String> map = new HashMap<String, String>();
+								map.put("type", extConnValue.get(i).get("type"));
+								map.put("vnfc", extConnValue.get(i).get("VNFC"));
+
+								nameTypeMap.put(interfaceNode, map);
+							}
 						}
 					}
 				}
@@ -224,7 +249,7 @@ public class VNFDGenerator {
  */
 	
 	public void parseConnections(Map<String, LinkedList<String>> connectionConnPointMap, String instanceName) {
-		//System.out.println("connectionConnPointMap" + connectionConnPointMap);
+		System.out.println("connectionConnPointMap" + connectionConnPointMap);
 		Map<String, List<String>> instanceConnectionsMap = new HashMap<String, List<String>>();
 
 		for (String c : connectionConnPointMap.keySet()) {
@@ -232,7 +257,7 @@ public class VNFDGenerator {
 				instanceConnectionsMap.put(c, connectionConnPointMap.get(c));
 			}
 		}
-		//System.out.println("instanceConnectionsMap: " + instanceConnectionsMap);
+		System.out.println("instanceConnectionsMap: " + instanceConnectionsMap);
 
 		for (String connName : instanceConnectionsMap.keySet()) {
 			List<String> endNodes = new ArrayList<String>();
@@ -260,8 +285,8 @@ public class VNFDGenerator {
 		for (String connection : connectionConnPointMap.keySet()) {
 			setFinalConnectionPoints(connection, externalConnectionsMap, instanceName, connectionConnPointMap);
 		}
-		//System.out.println("externalConnectionsMap: " + externalConnectionsMap);
-		//System.out.println("internalConnectionsMap: " + internalConnectionsMap);
+		System.out.println("externalConnectionsMap: " + externalConnectionsMap);
+		System.out.println("internalConnectionsMap: " + internalConnectionsMap);
 	}
 	
 
@@ -312,7 +337,7 @@ public class VNFDGenerator {
 			}
 			vmSubstituteMap.put(nodeName, aux);	
 		}
-		//System.out.println(vmSubstituteMap);
+		System.out.println("vmSubstituteMap: "+vmSubstituteMap);
 		
 		//Obtain the final VNFC map, renaming the names of the VirtualMachines
 		for(String nodeName:vmSubstituteMap.keySet() ){
@@ -331,15 +356,15 @@ public class VNFDGenerator {
 			vnfc.addAll(nodeVnfcMap.get(nodeName));
 		}
 		
-		//System.out.println("vnfc: "+vnfc);
+		System.out.println("vnfc: "+vnfc);
 	}
 	
 	
 	/*
 	 * Generating the Internal connections section for the VNFD.yaml
 	 */
-	public void setVnfdInternalConnections(Map<String, String> connPointVnfdInterfaceMap, String instanceName, String templateDefinitionName){
-		
+	public String setVnfdInternalConnections(Map<String, String> connPointVnfdInterfaceMap, String instanceName, String templateDefinitionName){
+		String errorInfo = null;
 		//First, replace VMName with the one allocated for the final VNFD
 		for(String nodeName:vmSubstituteMap.keySet() ){
 			Map<String, Map<String,String>> ifaceDetailsMap= nodeNameTypeConnPointMap.get(nodeName);
@@ -350,10 +375,10 @@ public class VNFDGenerator {
 				}
 				
 			}
-			//System.out.println( nodeInternalConnMap);
-			//System.out.println(nodeName);
+			System.out.println( nodeInternalConnMap);
+			System.out.println(nodeName);
 			List<Map<String, Object>> internalConnFromVNFDs= nodeInternalConnMap.get(nodeName);
-			//System.out.println(internalConnFromVNFDs);
+			System.out.println(internalConnFromVNFDs);
 			if(internalConnFromVNFDs != null){
 				Iterator<Map<String, Object>> itr = internalConnFromVNFDs.iterator();
 				while (itr.hasNext()) {
@@ -371,40 +396,66 @@ public class VNFDGenerator {
 			
 			
 		}
-		//System.out.println("nodeInternalConnMap"+nodeInternalConnMap);
+		System.out.println("nodeInternalConnMap"+nodeInternalConnMap);
 		
-		//System.out.println(nodeNameTypeConnPointMap);
+		System.out.println(nodeNameTypeConnPointMap);
 		
 		//Obtaining the values for each of the params that a internal connection has.
-		for (String c:internalConnectionsMap.keySet()){
-			String errorInfo = null;
-			List<Map<String,Object>> elements = new LinkedList<Map<String, Object>>();
+		for (String c : internalConnectionsMap.keySet()) {
+
+			List<Map<String, Object>> elements = new LinkedList<Map<String, Object>>();
 			Iterator<String> itr = internalConnectionsMap.get(c).iterator();
+			System.out.println("internalConnectionsMap" + internalConnectionsMap);
 			LinkedList<String> types = new LinkedList<String>();
 			while (itr.hasNext()) {
-				String connectionPoint= null; 
-				connectionPoint=(String) itr.next();
+				String connectionPoint = null;
+				connectionPoint = (String) itr.next();
+				System.out.println(connectionPoint);
 				String iface = null;
 				iface = connPointVnfdInterfaceMap.get(connectionPoint);
-				Map<String, Object> elementDetail= new LinkedHashMap<String, Object>();
-				Map<String, String> aux= new LinkedHashMap<String, String>();
-				aux= nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]).get(iface);
-				types.add(aux.get("type"));
-				elementDetail.put("VNFC", aux.get("vnfc"));
-				elementDetail.put("local_iface_name", iface);
-				elements.add(elementDetail);
+				System.out.println(iface);
+				Map<String, Object> elementDetail = new LinkedHashMap<String, Object>();
+				Map<String, String> aux = new LinkedHashMap<String, String>();
+				aux = nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]).get(iface);
+				System.out.println("aux:" + aux);
+
+				if (aux != null) {
+					System.out.println("entrando dentro de aux!=null");
+					types.add(aux.get("type"));
+					System.out.println("type" + types);
+					elementDetail.put("VNFC", aux.get("vnfc"));
+					System.out.println("elementDetail" + elementDetail);
+					if (iface.split("\\.").length == 2) {
+						elementDetail.put("local_iface_name", iface.split("\\.")[0]);
+					} else {
+						elementDetail.put("local_iface_name", iface);
+					}
+					elements.add(elementDetail);
+					System.out.println("elements" + elements);
+				} else {
+					errorInfo = "The vnfdInterface " + iface + " from node " + connectionPoint.split("\\.")[0]
+							+ " does not match with any local_iface_name value.";
+					return errorInfo;
+				}
 			}
-			//System.out.println(types+""+elements);
+			System.out.println(types + "" + elements);
 			if (!types.getFirst().equals(types.getLast())) {
-				errorInfo = "The types of the interfaces do not match";
-				//System.out.println(errorInfo);
-			}else{
-				intConns.add(generateInternalConnection(c, types.getFirst(), instanceName, templateDefinitionName,elements));
+				errorInfo = "The types "+types+" of the interfaces do not match. Details about the interfaces: "+elements+" Connection Details: "+ internalConnectionsMap.get(c);
+				System.out.println(errorInfo);
+				return errorInfo;
+			} else {
+
+				intConns.add(generateInternalConnection(c, types.getFirst(), instanceName, templateDefinitionName,
+						elements));
+
 			}
-			//System.out.println("intConns "+ intConns);
-			//generateInternalConnection(c,)
+			System.out.println("intConns " + intConns);
+			// generateInternalConnection(c,)
 		}
-	}
+	
+		
+		return errorInfo;
+		}
 	
 	/*
 	 * Generating the structure of each internal connection
@@ -432,39 +483,52 @@ public class VNFDGenerator {
 	/*
 	 * Generating the Internal connections section for the VNFD.yaml
 	 */
-	public void setVnfdExternalConnections(Map<String, String> connPointVnfdInterfaceMap, String instanceName, String templateDefinitionName){
-		
+	public String setVnfdExternalConnections(Map<String, String> connPointVnfdInterfaceMap, String instanceName, String templateDefinitionName){
+		String errorInfo = null;
 
 		
 		//Obtaining the values for each of the params that a internal connection has.
-		for (String c:externalConnectionsMap.keySet()){
-			String errorInfo = null;
+		for (String c : externalConnectionsMap.keySet()) {
+			;
 			String vnfc = null;
-			String localIface=null;
+			String localIface = null;
 			Iterator<String> itr = externalConnectionsMap.get(c).iterator();
 			LinkedList<String> types = new LinkedList<String>();
 			while (itr.hasNext()) {
-				String connectionPoint= null; 
-				connectionPoint=(String) itr.next();
+				String connectionPoint = null;
+				connectionPoint = (String) itr.next();
 				if (!connectionPoint.split("\\.")[0].equals(instanceName)) {
-					//System.out.println(connectionPoint.split("\\.")[0]);
+					// System.out.println(connectionPoint.split("\\.")[0]);
 					String iface = null;
 					iface = connPointVnfdInterfaceMap.get(connectionPoint);
+					System.out.println(iface);
 					Map<String, String> aux = new LinkedHashMap<String, String>();
-					//System.out.println(connectionPoint.split("\\.")[0]);
+					// System.out.println(connectionPoint.split("\\.")[0]);
 					aux = nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]).get(iface);
-					types.add(aux.get("type"));
-					vnfc = aux.get("vnfc");
-					localIface = iface;
+					if (aux != null){
+						System.out.println(aux);
+						types.add(aux.get("type"));
+						vnfc = aux.get("vnfc");
+						localIface = iface;
+					}
+					else{
+						errorInfo = "The vnfdInterface " + iface + " from node " + connectionPoint.split("\\.")[0]+ " does not match with any local_iface_name value.";
+						//System.out.println(errorInfo);
+						return errorInfo;
+					}
+					
+						
 				}
 			}
-			
-			extConns.add(generateExternalConnection(c, types.getFirst(), instanceName, templateDefinitionName, vnfc, localIface));
 
-			//generateInternalConnection(c,)
+			extConns.add(generateExternalConnection(c, types.getFirst(), instanceName, templateDefinitionName, vnfc,
+					localIface));
+
+			// generateInternalConnection(c,)
 		}
-
-		//System.out.println("extConns "+ extConns);
+		
+		System.out.println("extConns "+ extConns);
+		return errorInfo;
 	}
 	
 	
@@ -474,6 +538,7 @@ public class VNFDGenerator {
 	private Map<String,Object> generateExternalConnection(String connName, String type, String instanceName, String templateDefinitionName, String vnfc, String localIface){
 		Map<String,Object> internalMap = new LinkedHashMap<String, Object>();
 		String finalName = null;
+	
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		//System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
@@ -482,7 +547,11 @@ public class VNFDGenerator {
 		internalMap.put("name", finalName);
 		internalMap.put("type", type);
 		internalMap.put("VNFC", vnfc);
-		internalMap.put("local_iface_name", localIface);
+		if (localIface.split("\\.").length == 2){
+			internalMap.put("local_iface_name", localIface.split("\\.")[0]);
+		}else{
+			internalMap.put("local_iface_name", localIface);
+		}
 		internalMap.put("description", description);
 		
 		
@@ -491,7 +560,8 @@ public class VNFDGenerator {
 		return internalMap;
 	}
 	
-	public void generateVNFD(String instanceName){
+	public String generateVNFD(String instanceName,String results_path){
+		String errorInfo = null;
 		Map<String, Object> vnf = new LinkedHashMap<String, Object>();
 		Map<String, Object> vnfd = new LinkedHashMap<String, Object>();
 		String finalName = null;
@@ -506,11 +576,29 @@ public class VNFDGenerator {
 		
 		vnfd.put("vnf", vnf);
 		try {
-			testDumpWriter(vnfd, instanceName);
+			dumpWriter(vnfd, instanceName, results_path);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			errorInfo="The result path introduced does not exist";
+			//e.printStackTrace();
 		}
+		return errorInfo;
+	}
+
+	public void clear_vnfdGenerator(){
+		extConnValue.clear();
+		int_conn_value.clear();
+		nodeNameTypeConnPointMap.clear();
+		nodeVnfcMap.clear();
+		nodeVnfdNameMap.clear();
+		nodeVnfcNameMap.clear();
+		internalConnectionsMap.clear();
+		externalConnectionsMap.clear();
+		nodeInternalConnMap.clear();
+		vmSubstituteMap.clear();
+		vnfc.clear();
+		intConns.clear();
+		extConns.clear();
 	}
 
 }
+

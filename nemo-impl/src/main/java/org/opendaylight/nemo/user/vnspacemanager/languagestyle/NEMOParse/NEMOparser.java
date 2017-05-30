@@ -1064,6 +1064,7 @@ public class NEMOparser implements NEMOparserConstants {
   String strReturn = null;
   Token connectionPointName = null;
   Token extInterfaceName = null;
+  String extInt=null;
     connectionPointName = jj_consume_token(ID);
     System.out.println(connectionPointName.image);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1074,10 +1075,12 @@ public class NEMOparser implements NEMOparserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TEMPID:
         extInterfaceName = jj_consume_token(TEMPID);
+                extInt=extInterfaceName.image;
         System.out.println(extInterfaceName.image);
         break;
       case ID:
         extInterfaceName = jj_consume_token(ID);
+        extInt=extInterfaceName.image;
         System.out.println(extInterfaceName.image);
         break;
       default:
@@ -1091,7 +1094,7 @@ public class NEMOparser implements NEMOparserConstants {
       ;
     }
     jj_consume_token(SEMICOLON);
-  {if (true) return definition.createAbstractConnectionPoint(connectionPointName.image, extInterfaceName.image);}
+  {if (true) return definition.createAbstractConnectionPoint(connectionPointName.image, extInt);}
     throw new Error("Missing return statement in function");
   }
 
