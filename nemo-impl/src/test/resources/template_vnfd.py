@@ -2,6 +2,7 @@
 #Filename:servicechain.py
 import requests,json
 import argparse, sys
+import os
 from requests.auth import HTTPBasicAuth
 
 
@@ -96,9 +97,12 @@ def post(url, data):
 	
 if __name__ == '__main__':
 
+	path_result_default=os.getcwd()
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--controller', default='127.0.0.1', help='controller IP')
+	parser.add_argument('-o', '--options', default=path_result_default, help='Destination path where the VNF Descriptor will be saved')
 	args=parser.parse_args()
+	print(args.options)
 	try:
 		path = raw_input("Introduce the path of your intent ")
 		print path
@@ -113,8 +117,7 @@ if __name__ == '__main__':
 		
 	try:
 		instance = raw_input("Introduce instance's name from which you want to generate the VNFD ")
-		path = raw_input("Introduce the path where you want to save the result files ")
-		create_yaml(args.controller, instance, path)
+		create_yaml(args.controller, instance, args.options)
 	except NameError: 
 		sys.exit("The instance's name: "+instance+" is not valid")
 
