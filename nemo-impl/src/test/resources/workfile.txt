@@ -2,6 +2,17 @@ CREATE NodeModel q_vnf VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/tes
 
 CREATE NodeModel j_vnf VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/dataplaneVNF_2VMs.yaml ; ConnectionPoint data_inside at VNFD: xe1.vnf_2vms-vm1; ConnectionPoint data_outside at VNFD: eth0.vnf_2vms-vm1;
 
-CREATE NodeModel wed; Node jas Type j_vnf; Node qas Type q_vnf; ConnectionPoint inside; ConnectionPoint output; Connection c1 Type p2p Endnodes inside, qas.a ; Connection c2 Type p2p Endnodes qas.b, jas.data_inside ; Connection c3 Type p2p Endnodes jas.data_outside, output;
+CREATE NodeModel da_vnf VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/dataplaneVNF_2VMs.yaml ; ConnectionPoint data_inside at VNFD: xe1.vnf_2vms-vm1; ConnectionPoint data_outside at VNFD: eth0.vnf_2vms-vm1;
 
-CREATE Node ele Type wed;
+CREATE NodeModel internet2; Node je2 Type j_vnf; Node qos Type q_vnf; Node daas Type da_vnf; ConnectionPoint inside; ConnectionPoint output; Connection c1 Type p2p Endnodes inside, qos.a ; Connection c2 Type p2p Endnodes qos.b, daas.data_inside ; Connection c22 Type p2p Endnodes daas.data_outside, je2.data_inside ; Connection c3 Type p2p Endnodes je2.data_outside, output;
+
+CREATE NodeModel dmz; Node int1 Type internet2; ConnectionPoint as; Connection c1 Type p2p Endnodes as , int1.inside;
+
+
+
+DELETE TemplateDefinition dmz;
+
+
+
+
+

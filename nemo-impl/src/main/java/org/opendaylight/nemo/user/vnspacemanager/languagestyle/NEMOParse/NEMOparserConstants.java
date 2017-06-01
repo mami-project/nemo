@@ -116,67 +116,71 @@ public interface NEMOparserConstants {
   /** RegularExpression Id. */
   int NODEMODEL = 53;
   /** RegularExpression Id. */
-  int STRING = 54;
+  int TEMPLATEINSTANCE = 54;
   /** RegularExpression Id. */
-  int INTEGER = 55;
+  int TEMPLATEDEFINITION = 55;
   /** RegularExpression Id. */
-  int RANGE = 56;
+  int STRING = 56;
   /** RegularExpression Id. */
-  int AT = 57;
+  int INTEGER = 57;
   /** RegularExpression Id. */
-  int HTTP = 58;
+  int RANGE = 58;
   /** RegularExpression Id. */
-  int HTTPS = 59;
+  int AT = 59;
   /** RegularExpression Id. */
-  int FILE = 60;
+  int HTTP = 60;
   /** RegularExpression Id. */
-  int UNUMBER = 61;
+  int HTTPS = 61;
   /** RegularExpression Id. */
-  int ID = 62;
+  int FILE = 62;
   /** RegularExpression Id. */
-  int TEMPID = 63;
+  int UNUMBER = 63;
   /** RegularExpression Id. */
-  int ETHPREF = 64;
+  int ID = 64;
   /** RegularExpression Id. */
-  int IPV4PREF = 65;
+  int TEMPID = 65;
   /** RegularExpression Id. */
-  int DATEVAL = 66;
+  int ETHPREF = 66;
   /** RegularExpression Id. */
-  int TIMEVAL = 67;
+  int IPV4PREF = 67;
   /** RegularExpression Id. */
-  int FULLTIME = 68;
+  int DATEVAL = 68;
   /** RegularExpression Id. */
-  int ETHADDR = 69;
+  int TIMEVAL = 69;
   /** RegularExpression Id. */
-  int IPV4ADDR = 70;
+  int FULLTIME = 70;
   /** RegularExpression Id. */
-  int URI = 71;
+  int ETHADDR = 71;
   /** RegularExpression Id. */
-  int UBYTE = 72;
+  int IPV4ADDR = 72;
   /** RegularExpression Id. */
-  int HEXDIGIT = 73;
+  int URI = 73;
   /** RegularExpression Id. */
-  int YEAR = 74;
+  int UBYTE = 74;
   /** RegularExpression Id. */
-  int SMONDAY = 75;
+  int HEXDIGIT = 75;
   /** RegularExpression Id. */
-  int LMONDAY = 76;
+  int YEAR = 76;
   /** RegularExpression Id. */
-  int FEBDAY = 77;
+  int SMONDAY = 77;
   /** RegularExpression Id. */
-  int HOUR = 78;
+  int LMONDAY = 78;
   /** RegularExpression Id. */
-  int MINUTE = 79;
+  int FEBDAY = 79;
   /** RegularExpression Id. */
-  int SECOND = 80;
+  int HOUR = 80;
   /** RegularExpression Id. */
-  int DIGIT = 81;
+  int MINUTE = 81;
   /** RegularExpression Id. */
-  int LETTER = 82;
+  int SECOND = 82;
   /** RegularExpression Id. */
-  int UPLOWLETTER = 83;
+  int DIGIT = 83;
   /** RegularExpression Id. */
-  int INNERURI = 84;
+  int LETTER = 84;
+  /** RegularExpression Id. */
+  int UPLOWLETTER = 85;
+  /** RegularExpression Id. */
+  int INNERURI = 86;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -237,6 +241,8 @@ public interface NEMOparserConstants {
     "\"flows\"",
     "\"operations\"",
     "\"NodeModel\"",
+    "\"TemplateInstance\"",
+    "\"TemplateDefinition\"",
     "\"string\"",
     "\"integer\"",
     "\"range\"",

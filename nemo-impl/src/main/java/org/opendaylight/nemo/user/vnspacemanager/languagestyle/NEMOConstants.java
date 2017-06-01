@@ -47,6 +47,9 @@ public interface NEMOConstants {
     String connection = "Connection";
     String flow = "Flow";
     String operation = "Operation";
+    String templateInstance = "TemplateInstance";
+    String connectionPoint = "ConnectionPoint";
+    String templateDefinition = "TemplateDefinition";
     String AllNodes = "nodes";
     String AllConnections = "connections";
     String AllFlows = "flows";

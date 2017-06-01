@@ -14,8 +14,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.com
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.common.rev151010.UserId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.user.intent.operations.Operation;
 
+
+
+
 /**
  * Created by z00293636 on 2015/9/2.
+ * Updated by ebg on 2017/06/2
  */
 public class DeleteConnection {
     private TenantManage tenantManage;
@@ -43,7 +47,7 @@ public class DeleteConnection {
         }
 
         if (!connectionExist){
-            return "The connection instance "+connectionId.getValue()+ " is not exit.";
+            return "The connection instance "+connectionId.getValue()+ " does not exit.";
         }
         else {
             if (tenantManage.getOperation(userId)!=null){

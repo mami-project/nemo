@@ -20,6 +20,7 @@ import java.util.List;
 
 /**
  * Created by z00293636 on 2015/9/2.
+ * Updated by ebg on 2017/06/2
  */
 public class DeleteNode {
     private TenantManage tenantManage;
@@ -53,7 +54,7 @@ public class DeleteNode {
                 for (Connection connection : tenantManage.getConnection(userId).values()){
                     List<EndNode> endNodeList = connection.getEndNode();
                     for (EndNode endNode :endNodeList){
-                        if (endNode.getNodeId().equals(nodeId)){
+                        if (endNode.getNodeId().getValue().equals(nodeId.getValue())){
                             tenantManage.getConnection(userId).remove(connection.getConnectionId());
                             tenantManage.getUserNameIdMap(userId).remove(tenantManage.getName(userId,connection.getConnectionId().getValue()));
                             break;
@@ -65,7 +66,7 @@ public class DeleteNode {
                 for (Connection connection : tenantManage.getConnectionDataStore(userId).values()){
                     List<EndNode> endNodeList = connection.getEndNode();
                     for (EndNode endNode :endNodeList){
-                        if (endNode.getNodeId().equals(nodeId)){
+                        if (endNode.getNodeId().getValue().equals(nodeId.getValue())){
                             tenantManage.setUserDeleteIntent(userId,NEMOConstants.connection,connection.getConnectionId().getValue());
                             tenantManage.getUserNameIdMap(userId).remove(tenantManage.getName(userId,connection.getConnectionId().getValue()));
                             break;

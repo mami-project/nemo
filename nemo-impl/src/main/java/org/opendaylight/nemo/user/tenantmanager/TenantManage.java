@@ -895,7 +895,58 @@ public class TenantManage {
                         }
                     });
                 }
-            }
+                if (deleteObject.get(objectId).equals(NEMOConstants.templateInstance)){
+                    UserKey userKey = new UserKey(userId);
+                    TemplateInstanceKey templateInstanceKey = new TemplateInstanceKey(new TemplateInstanceId(objectId));
+                    WriteTransaction t = dataBroker.newWriteOnlyTransaction();
+                    InstanceIdentifier<TemplateInstance> templateinstanceid = InstanceIdentifier.builder(Users.class).child(User.class, userKey).child(TemplateInstances.class).child(TemplateInstance.class,templateInstanceKey).build();
+                    t.delete(LogicalDatastoreType.CONFIGURATION, templateinstanceid);
+                    CheckedFuture<Void, TransactionCommitFailedException> f = t.submit();
+                    Futures.addCallback(f, new FutureCallback<Void>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LOG.error("Could not delete template instance", t);
+                        }
+                        @Override
+                        public void onSuccess(Void result) {
+                        }
+                    });
+                }
+                if (deleteObject.get(objectId).equals(NEMOConstants.connectionPoint)){
+                    UserKey userKey = new UserKey(userId);
+                    ConnectionPointKey connectionPointKey = new ConnectionPointKey(new ConnectionPointId(objectId));
+                    WriteTransaction t = dataBroker.newWriteOnlyTransaction();
+                    InstanceIdentifier<ConnectionPoint> connectionpointid = InstanceIdentifier.builder(Users.class).child(User.class, userKey).child(Objects.class).child(ConnectionPoint.class,connectionPointKey).build();
+                    t.delete(LogicalDatastoreType.CONFIGURATION, connectionpointid);
+                    CheckedFuture<Void, TransactionCommitFailedException> f = t.submit();
+                    Futures.addCallback(f, new FutureCallback<Void>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LOG.error("Could not delete connectionPoint instance", t);
+                        }
+                        @Override
+                        public void onSuccess(Void result) {
+                        }
+                    });
+                }
+            	if (deleteObject.get(objectId).equals(NEMOConstants.templateDefinition)){
+                    UserKey userKey = new UserKey(userId);
+                    TemplateDefinitionKey templateDefinitionKey = new TemplateDefinitionKey(new TemplateName(objectId));
+                    WriteTransaction t = dataBroker.newWriteOnlyTransaction();
+                    InstanceIdentifier<TemplateDefinition> templateDefinitionId = InstanceIdentifier.builder(Users.class).child(User.class, userKey).child(TemplateDefinitions.class).child(TemplateDefinition.class, templateDefinitionKey).build();
+                    t.delete(LogicalDatastoreType.CONFIGURATION, templateDefinitionId);
+                    CheckedFuture<Void, TransactionCommitFailedException> f = t.submit();
+                    Futures.addCallback(f, new FutureCallback<Void>() {
+                        @Override
+                        public void onFailure(Throwable t) {
+                            LOG.error("Could not delete template definition", t);
+                        }
+                        @Override
+                        public void onSuccess(Void result) {
+                        }
+                    });
+                }
+	     }
         }
     }
 }

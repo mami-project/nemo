@@ -25,10 +25,13 @@ import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteConnectionLang;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteFlowLang;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteOperationLang;
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteTemplateInstanceLang;
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteTemplateDefinitionLang;
+
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.Query;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.NEMOConstants;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.updateintentlang.UpdateTemplateDefinitionLang;
-
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteConnectionPointLang;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.nemo.user.tenantmanager.TenantManage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.common.rev151010.UserId;
@@ -122,6 +125,8 @@ TOKEN :
 |   < FLOWS: "flows" >
 |   < OPERATIONS: "operations" >
 |   < NODEMODEL: "NodeModel" >
+|   < TEMPLATEINSTANCE: "TemplateInstance" >
+|   < TEMPLATEDEFINITION: "TemplateDefinition" >
 |   < STRING: "string" >
 |   < INTEGER: "integer" >
 |   < RANGE: "range" >
@@ -221,6 +226,18 @@ String DeleteIntent(UserId userId, DataBroker dataBroker, TenantManage tenantMan
   {
     return DeleteOperation(userId,dataBroker,tenantManage);
   }
+| <  TEMPLATEINSTANCE >
+ {
+   return DeleteTemplateInstance(userId,dataBroker,tenantManage);
+ }
+| <  CONNECTIONPOINT >
+ {
+   return DeleteConnectionPoint(userId,dataBroker,tenantManage);
+ }
+| <  TEMPLATEDEFINITION >
+ {
+   return DeleteTemplateDefinition(userId,dataBroker,tenantManage);
+ }
 }
 
 String UpdateNode(UserId userId, DataBroker dataBroker, TenantManage tenantManage):
@@ -849,7 +866,11 @@ String DeleteNode(UserId userId, DataBroker dataBroker, TenantManage tenantManag
     DeleteNodeLang deleteNodelang = new DeleteNodeLang(dataBroker, tenantManage);   
 }
 {
-  objNodeNameToken = < ID >
+ (
+   objNodeNameToken = < ID >
+|
+  objNodeNameToken = < TEMPID >
+)
   < SEMICOLON >
   {
     return deleteNodelang.DeleteNodeHandling(userId, objNodeNameToken.image);
@@ -895,6 +916,58 @@ String DeleteOperation(UserId userId, DataBroker dataBroker, TenantManage tenant
   }
 }
 
+String DeleteTemplateInstance(UserId userId, DataBroker dataBroker, TenantManage tenantManage):
+{
+    Token objTemplateInstanceNameToken = null;
+    DeleteTemplateInstanceLang deleteTemplateInstancelang = new DeleteTemplateInstanceLang(dataBroker, tenantManage);   
+}
+{
+ (
+  objTemplateInstanceNameToken = < ID >
+|
+  objTemplateInstanceNameToken = < TEMPID >
+)
+
+  < SEMICOLON >
+  {
+    return deleteTemplateInstancelang.DeleteTemplateInstanceHandling(userId, objTemplateInstanceNameToken.image);
+  }
+}
+
+String DeleteConnectionPoint(UserId userId, DataBroker dataBroker, TenantManage tenantManage):
+{
+    Token objConnPointNameToken = null;
+    DeleteConnectionPointLang deleteConnectionPointlang = new DeleteConnectionPointLang(dataBroker, tenantManage);   
+}
+{
+  (
+    objConnPointNameToken = < ID >
+|
+	objConnPointNameToken = < TEMPID >
+  
+  < SEMICOLON >
+)
+  {
+    return deleteConnectionPointlang.DeleteConnectionPointHandling(userId, objConnPointNameToken.image);
+  }
+}
+
+String DeleteTemplateDefinition(UserId userId, DataBroker dataBroker, TenantManage tenantManage):
+{
+    Token objTemplateDefinitionNameToken = null;
+    DeleteTemplateDefinitionLang deleteTemplateDefinitionlang = new DeleteTemplateDefinitionLang(dataBroker, tenantManage);   
+}
+{
+  (
+    objTemplateDefinitionNameToken = < ID >
+|
+	objTemplateDefinitionNameToken = < TEMPID >
+)
+  < SEMICOLON >
+  {
+    return deleteTemplateDefinitionlang.DeleteTemplateDefinitionHandling(userId, objTemplateDefinitionNameToken.image);
+  }
+}
 String Query(UserId userId, DataBroker dataBroker, TenantManage tenantManage):
 {
   String strReturn = null;

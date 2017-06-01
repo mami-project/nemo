@@ -135,7 +135,7 @@ public class VNFDManager {
                 templateInstanceNameDSMap = tenantManage.getInstanceNameDataStore(createVnfdInput.getUserId());
             }
 
-        //erroInfo = nodeDSMap+"\n"+connectionDSMap+"\n"+connectionPointDSMap+"\n"+templateDefinitionDSMap+"\n"+templateInstanceDSMap+"\n"+tenantManage.getUsers()+"\nTenant manage \n"+nodeMap+"\n"+connectionMap+"\n"+connectionPointMap+"\n"+templateDefinitionMap+"\n"+templateInstanceMap+"\n"+templateInstanceName; 
+        System.out.println(nodeDSMap+"\n"+connectionDSMap+"\n"+connectionPointDSMap+"\n"+templateDefinitionDSMap+"\n"+templateInstanceDSMap+"\nTenant manage \n"+nodeMap+"\n"+connectionMap+"\n"+connectionPointMap+"\n"+templateDefinitionMap+"\n"+templateInstanceMap); 
             vnfdOperations.clear_vnfdOperations();
 	    vnfdGenerator.clear_vnfdGenerator();
 	    String templateDefinitionName=null;

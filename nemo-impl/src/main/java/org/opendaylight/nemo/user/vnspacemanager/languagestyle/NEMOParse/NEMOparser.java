@@ -15,10 +15,13 @@ import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteConnectionLang;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteFlowLang;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteOperationLang;
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteTemplateInstanceLang;
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteTemplateDefinitionLang;
+
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.Query;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.NEMOConstants;
 import org.opendaylight.nemo.user.vnspacemanager.languagestyle.updateintentlang.UpdateTemplateDefinitionLang;
-
+import org.opendaylight.nemo.user.vnspacemanager.languagestyle.deleteintentlang.DeleteConnectionPointLang;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.nemo.user.tenantmanager.TenantManage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.common.rev151010.UserId;
@@ -132,6 +135,18 @@ public class NEMOparser implements NEMOparserConstants {
     case OPERATION:
       jj_consume_token(OPERATION);
     {if (true) return DeleteOperation(userId,dataBroker,tenantManage);}
+      break;
+    case TEMPLATEINSTANCE:
+      jj_consume_token(TEMPLATEINSTANCE);
+   {if (true) return DeleteTemplateInstance(userId,dataBroker,tenantManage);}
+      break;
+    case CONNECTIONPOINT:
+      jj_consume_token(CONNECTIONPOINT);
+   {if (true) return DeleteConnectionPoint(userId,dataBroker,tenantManage);}
+      break;
+    case TEMPLATEDEFINITION:
+      jj_consume_token(TEMPLATEDEFINITION);
+   {if (true) return DeleteTemplateDefinition(userId,dataBroker,tenantManage);}
       break;
     default:
       jj_la1[3] = jj_gen;
@@ -1101,7 +1116,18 @@ public class NEMOparser implements NEMOparserConstants {
   static final public String DeleteNode(UserId userId, DataBroker dataBroker, TenantManage tenantManage) throws ParseException {
     Token objNodeNameToken = null;
     DeleteNodeLang deleteNodelang = new DeleteNodeLang(dataBroker, tenantManage);
-    objNodeNameToken = jj_consume_token(ID);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      objNodeNameToken = jj_consume_token(ID);
+      break;
+    case TEMPID:
+      objNodeNameToken = jj_consume_token(TEMPID);
+      break;
+    default:
+      jj_la1[59] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     jj_consume_token(SEMICOLON);
     {if (true) return deleteNodelang.DeleteNodeHandling(userId, objNodeNameToken.image);}
     throw new Error("Missing return statement in function");
@@ -1131,6 +1157,66 @@ public class NEMOparser implements NEMOparserConstants {
     objOperationNameToken = jj_consume_token(ID);
     jj_consume_token(SEMICOLON);
     {if (true) return deleteOperationlang.DeleteOperationHandling(userId, objOperationNameToken.image);}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public String DeleteTemplateInstance(UserId userId, DataBroker dataBroker, TenantManage tenantManage) throws ParseException {
+    Token objTemplateInstanceNameToken = null;
+    DeleteTemplateInstanceLang deleteTemplateInstancelang = new DeleteTemplateInstanceLang(dataBroker, tenantManage);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      objTemplateInstanceNameToken = jj_consume_token(ID);
+      break;
+    case TEMPID:
+      objTemplateInstanceNameToken = jj_consume_token(TEMPID);
+      break;
+    default:
+      jj_la1[60] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(SEMICOLON);
+    {if (true) return deleteTemplateInstancelang.DeleteTemplateInstanceHandling(userId, objTemplateInstanceNameToken.image);}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public String DeleteConnectionPoint(UserId userId, DataBroker dataBroker, TenantManage tenantManage) throws ParseException {
+    Token objConnPointNameToken = null;
+    DeleteConnectionPointLang deleteConnectionPointlang = new DeleteConnectionPointLang(dataBroker, tenantManage);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      objConnPointNameToken = jj_consume_token(ID);
+      break;
+    case TEMPID:
+      objConnPointNameToken = jj_consume_token(TEMPID);
+      jj_consume_token(SEMICOLON);
+      break;
+    default:
+      jj_la1[61] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    {if (true) return deleteConnectionPointlang.DeleteConnectionPointHandling(userId, objConnPointNameToken.image);}
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public String DeleteTemplateDefinition(UserId userId, DataBroker dataBroker, TenantManage tenantManage) throws ParseException {
+    Token objTemplateDefinitionNameToken = null;
+    DeleteTemplateDefinitionLang deleteTemplateDefinitionlang = new DeleteTemplateDefinitionLang(dataBroker, tenantManage);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      objTemplateDefinitionNameToken = jj_consume_token(ID);
+      break;
+    case TEMPID:
+      objTemplateDefinitionNameToken = jj_consume_token(TEMPID);
+      break;
+    default:
+      jj_la1[62] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(SEMICOLON);
+    {if (true) return deleteTemplateDefinitionlang.DeleteTemplateDefinitionHandling(userId, objTemplateDefinitionNameToken.image);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1183,7 +1269,7 @@ public class NEMOparser implements NEMOparserConstants {
       objItemToken = jj_consume_token(OPERATIONS);
       break;
     default:
-      jj_la1[59] = jj_gen;
+      jj_la1[63] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1193,7 +1279,7 @@ public class NEMOparser implements NEMOparserConstants {
       objTargetToken = jj_consume_token(ID);
       break;
     default:
-      jj_la1[60] = jj_gen;
+      jj_la1[64] = jj_gen;
       ;
     }
     jj_consume_token(SEMICOLON);
@@ -1240,7 +1326,7 @@ public class NEMOparser implements NEMOparserConstants {
         targetValue.put(objRangeLeft.image+","+objRangeRight.image,"range");
       break;
     default:
-      jj_la1[61] = jj_gen;
+      jj_la1[65] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1301,7 +1387,7 @@ public class NEMOparser implements NEMOparserConstants {
       propertyvalue.put(objPropertyValueToken.image, "string");
           break;
         default:
-          jj_la1[62] = jj_gen;
+          jj_la1[66] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -1319,13 +1405,13 @@ public class NEMOparser implements NEMOparserConstants {
       propertyvalue.put(objRangeLeft.image+","+objRangeRight.image,"range");
         break;
       default:
-        jj_la1[63] = jj_gen;
+        jj_la1[67] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[64] = jj_gen;
+      jj_la1[68] = jj_gen;
       LinkedHashMap<String,String> multiProperty = nodeMultiProperty();
       for (String value : multiProperty.keySet())
       {
@@ -1353,7 +1439,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[65] = jj_gen;
+          jj_la1[69] = jj_gen;
           break label_19;
         }
         jj_consume_token(COMMA);
@@ -1371,7 +1457,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[66] = jj_gen;
+          jj_la1[70] = jj_gen;
           break label_20;
         }
         jj_consume_token(COMMA);
@@ -1389,7 +1475,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[67] = jj_gen;
+          jj_la1[71] = jj_gen;
           break label_21;
         }
         jj_consume_token(COMMA);
@@ -1407,7 +1493,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[68] = jj_gen;
+          jj_la1[72] = jj_gen;
           break label_22;
         }
         jj_consume_token(COMMA);
@@ -1425,7 +1511,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[69] = jj_gen;
+          jj_la1[73] = jj_gen;
           break label_23;
         }
         jj_consume_token(COMMA);
@@ -1443,7 +1529,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[70] = jj_gen;
+          jj_la1[74] = jj_gen;
           break label_24;
         }
         jj_consume_token(COMMA);
@@ -1461,7 +1547,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[71] = jj_gen;
+          jj_la1[75] = jj_gen;
           break label_25;
         }
         jj_consume_token(COMMA);
@@ -1479,7 +1565,7 @@ public class NEMOparser implements NEMOparserConstants {
           ;
           break;
         default:
-          jj_la1[72] = jj_gen;
+          jj_la1[76] = jj_gen;
           break label_26;
         }
         jj_consume_token(COMMA);
@@ -1496,7 +1582,7 @@ public class NEMOparser implements NEMOparserConstants {
         propertyvalue.put(objRangeLeft.image+","+objRangeRight.image,"range");
       break;
     default:
-      jj_la1[73] = jj_gen;
+      jj_la1[77] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1515,7 +1601,7 @@ public class NEMOparser implements NEMOparserConstants {
   static public Token jj_nt;
   static private int jj_ntk;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[74];
+  static final private int[] jj_la1 = new int[78];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1525,13 +1611,13 @@ public class NEMOparser implements NEMOparserConstants {
       jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe000000,0x1e000000,0x20000000,0x20000000,0x40,0x80000000,0x40,0x0,0x0,0x40,0x0,0x0,0x40,0x0,0x40,0x40,0x0,0x4000,0x1f8000,0x7000,0x7000,0x1f8000,0x0,0x20,0x40,0x20,0x0,0x0,0x40,0x0,0x0,0x0,0x20000000,0x20000000,0x40,0x80000000,0x40,0x0,0x0,0x40,0x0,0x0,0x40,0x0,0x40,0x40,0x0,0x4000,0x1f8000,0x7000,0x7000,0x1f8000,0x0,0x20,0x40,0x20,0x0,0x0,0x0,0xc0000000,0x0,0x100,0x0,0x100,0x100,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x100,};
+      jj_la1_0 = new int[] {0xe000000,0x1e000000,0x20000000,0x20000000,0x40,0x80000000,0x40,0x0,0x0,0x40,0x0,0x0,0x40,0x0,0x40,0x40,0x0,0x4000,0x1f8000,0x7000,0x7000,0x1f8000,0x0,0x20,0x40,0x20,0x0,0x0,0x40,0x0,0x0,0x0,0x20000000,0x20000000,0x40,0x80000000,0x40,0x0,0x0,0x40,0x0,0x0,0x40,0x0,0x40,0x40,0x0,0x4000,0x1f8000,0x7000,0x7000,0x1f8000,0x0,0x20,0x40,0x20,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0000000,0x0,0x100,0x0,0x100,0x100,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x100,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x400,0x200052,0x52,0x0,0x0,0x0,0x1,0xc0000000,0x0,0xc0000000,0x4,0x0,0x1,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x200,0x1c00000,0x0,0x1c00000,0x1,0x1000,0x5a,0x5a,0x0,0x0,0x0,0x1,0xc0000000,0x0,0xc0000000,0x4,0x0,0x1,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x200,0xc0000000,0x2000000,0x401e23a5,0x800,0x60000000,0xc0000000,0xe0000000,0xe0000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xe0000000,};
+      jj_la1_1 = new int[] {0x0,0x400,0x200052,0xc0005a,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x4,0x0,0x1,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x200,0x7000000,0x0,0x7000000,0x1,0x1000,0x5a,0x5a,0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x4,0x0,0x1,0x0,0x0,0x1,0x0,0x0,0x0,0x0,0x0,0x100,0x0,0x0,0x0,0x200,0x0,0x8000000,0x0,0x0,0x0,0x0,0x1e23a5,0x800,0x80000000,0x0,0x80000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000000,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x18,0x7a,0x7a,0x7a,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7a,};
+      jj_la1_2 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x0,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x0,0x3,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3,0x0,0x3,0x3,0x3,0x3,0x1,0x0,0x61,0x1eb,0x1eb,0x1eb,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1eb,};
    }
 
   /** Constructor with InputStream. */
@@ -1552,7 +1638,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1566,7 +1652,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -1583,7 +1669,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1593,7 +1679,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -1609,7 +1695,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -1618,7 +1704,7 @@ public class NEMOparser implements NEMOparserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 74; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 78; i++) jj_la1[i] = -1;
   }
 
   static private Token jj_consume_token(int kind) throws ParseException {
@@ -1669,12 +1755,12 @@ public class NEMOparser implements NEMOparserConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[85];
+    boolean[] la1tokens = new boolean[87];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 74; i++) {
+    for (int i = 0; i < 78; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -1689,7 +1775,7 @@ public class NEMOparser implements NEMOparserConstants {
         }
       }
     }
-    for (int i = 0; i < 85; i++) {
+    for (int i = 0; i < 87; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

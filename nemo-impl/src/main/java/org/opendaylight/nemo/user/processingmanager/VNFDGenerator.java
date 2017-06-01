@@ -416,6 +416,7 @@ public class VNFDGenerator {
 				System.out.println(iface);
 				Map<String, Object> elementDetail = new LinkedHashMap<String, Object>();
 				Map<String, String> aux = new LinkedHashMap<String, String>();
+			  if( nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]) != null){
 				aux = nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]).get(iface);
 				System.out.println("aux:" + aux);
 
@@ -435,6 +436,10 @@ public class VNFDGenerator {
 				} else {
 					errorInfo = "The vnfdInterface " + iface + " from node " + connectionPoint.split("\\.")[0]
 							+ " does not match with any local_iface_name value.";
+					return errorInfo;
+				}
+			} else{
+					errorInfo = "The node "+connectionPoint.split("\\.")[0]+" does not exist.";
 					return errorInfo;
 				}
 			}
@@ -504,6 +509,7 @@ public class VNFDGenerator {
 					System.out.println(iface);
 					Map<String, String> aux = new LinkedHashMap<String, String>();
 					// System.out.println(connectionPoint.split("\\.")[0]);
+				  if( nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]) != null){
 					aux = nodeNameTypeConnPointMap.get(connectionPoint.split("\\.")[0]).get(iface);
 					if (aux != null){
 						System.out.println(aux);
@@ -514,6 +520,10 @@ public class VNFDGenerator {
 					else{
 						errorInfo = "The vnfdInterface " + iface + " from node " + connectionPoint.split("\\.")[0]+ " does not match with any local_iface_name value.";
 						//System.out.println(errorInfo);
+						return errorInfo;
+					}
+					}else{
+						errorInfo = "The node "+connectionPoint.split("\\.")[0]+" does not exist.";
 						return errorInfo;
 					}
 					
