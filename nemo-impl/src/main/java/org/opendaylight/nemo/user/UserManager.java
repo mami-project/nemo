@@ -26,6 +26,8 @@ import org.opendaylight.nemo.user.processingmanager.VNFDManager;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.*;
 import org.opendaylight.nemo.user.processingmanager.VNFDOperations;
 import org.opendaylight.nemo.user.processingmanager.VNFDGenerator;
+import org.opendaylight.nemo.user.processingmanager.VNFDManagerOSM;
+import org.opendaylight.nemo.user.processingmanager.VNFDGeneratorOSM;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
@@ -57,6 +59,7 @@ public class UserManager implements NemoIntentService {
     private VNFDManager vnfdManager;
     private VNFDOperations vnfdOperations;
     private VNFDGenerator vnfdGenerator;
+    private VNFDManagerOSM vnfdManagerOsm;
 
     Boolean transaction;
     Boolean informresolver;
@@ -78,6 +81,8 @@ public class UserManager implements NemoIntentService {
         vnfdManager = new VNFDManager(dataBroker, tenantManage);
         vnfdOperations = new VNFDOperations();
         vnfdGenerator = new VNFDGenerator();
+        vnfdManagerOsm = new VNFDManagerOSM(dataBroker, tenantManage);
+
 
         transaction = false;
         informresolver = false;
@@ -253,7 +258,12 @@ public class UserManager implements NemoIntentService {
         final CreateVnfdOutputBuilder outputBuilder = new CreateVnfdOutputBuilder();
         try {
         String errorInfo = null;
+        if(input.getVnfdStyle().equals("openmano")){
         errorInfo = vnfdManager.generateVNFD(aaa, input);
+        }
+        if(input.getVnfdStyle().equals("osm")){
+            errorInfo = vnfdManagerOsm.generateVNFD(aaa, input);
+        }
         if (errorInfo != null){
             vnfdOperations.clear_vnfdOperations();
             vnfdGenerator.clear_vnfdGenerator();
@@ -278,4 +288,3 @@ public class UserManager implements NemoIntentService {
     }
 
 }
-

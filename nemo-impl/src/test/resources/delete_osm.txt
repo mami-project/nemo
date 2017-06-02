@@ -1,0 +1,6 @@
+DELETE TemplateDefinition dmz_vnf;
+DELETE TemplateDefinition j_vnf;
+DELETE TemplateDefinition sa_vnf;
+DELETE TemplateDefinition internet;
+DELETE TemplateInstance internet1;
+DELETE TemplateInstance internet2;

@@ -37,6 +37,8 @@ public class VNFDOperations {
 	private Map<String,LinkedList<String>> connectionConnPointMap; // <nombreConnection , List<nombreConnPoints>>
 	private Map<String, List<String>> nodeVnfdInterfacesMap; // <nombreNode, List<vnfInterfaceValue>>
 	private Map<String, String> connPointVnfdInterfaceMap;
+	private List<String> instanceConnectionPointsMap;
+	private Map<String, Map<String, String>> nodeConnectionPointsMap;
 
 
 	public VNFDOperations() {
@@ -45,7 +47,8 @@ public class VNFDOperations {
 		connectionConnPointMap = new HashMap<String, LinkedList<String>>();
 		nodeVnfdInterfacesMap = new HashMap<String, List<String>>();
 		connPointVnfdInterfaceMap = new HashMap<String, String>();
-
+		instanceConnectionPointsMap = new ArrayList<String>();
+		nodeConnectionPointsMap = new HashMap<String, Map<String, String>>();
 	}
 
 	public void setInstanceNodes(TemplateInstanceName templateInstanceName, Map<NodeId, Node> nodeMap,
@@ -322,12 +325,98 @@ public class VNFDOperations {
 		}
 	}
 
-	public void clear_vnfdOperations(){
+public void clear_vnfdOperations(){
 		instanceNodeMap.clear();
 		nodeVnfUriMap.clear();
 		connectionConnPointMap.clear();
 		nodeVnfdInterfacesMap.clear();
 		connPointVnfdInterfaceMap.clear();
+		instanceConnectionPointsMap.clear();
+		nodeConnectionPointsMap.clear();
+		
+	}
+	
+	
+	public void setNodeConnPoints( Map<ConnectionPointId, ConnectionPoint> connectionPointMap,
+			Map<ConnectionPointId, ConnectionPoint> connectionPointDSMap, TemplateInstanceName instance){
+		
+		 Map<String, Map<String, String>> nodeConnPointAuxMap = new HashMap<String, Map<String, String>>();
+		
+		nodeConnPointAuxMap.putAll(getConnPoints(connectionPointMap, connectionPointDSMap, instance.getValue(), instanceNodeMap.keySet()) );//puts the interfaces that the nodeModels have 
+		nodeConnPointAuxMap.putAll(getConnPoints(connectionPointMap, connectionPointDSMap,  instance.getValue(), instanceNodeMap.get(instance.getValue()).keySet()) ); //puts the interfaces that the instance's nodes have
+		
+		 nodeConnectionPointsMap.putAll(nodeConnPointAuxMap);
+		System.out.println("[VNFDOperations] nodeConnectionPointsMap: "+ nodeConnectionPointsMap);
+	}
+	
+	public Map<String, Map<String, String>> getConnPoints(Map<ConnectionPointId, ConnectionPoint> connectionPointMap, Map<ConnectionPointId, ConnectionPoint> connectionPointDSMap, String instanceName, Set<String> nodes) {
+		Map<String,Map<String,String>> nodeConnPointAuxMap = new HashMap<String, Map<String,String>>();
+		
+		
+		for (String nodeName : nodes) {
+			List<String> instanceConnPointsList = new ArrayList<String>();
+			Map<String,String> connPointsMap = new HashMap<String,String>();
+			if (connectionPointMap != null) {
+				for (ConnectionPoint connPoint : connectionPointMap.values()) {
+					//System.out.println(nodeName+" "+connPoint.getConnectionPointName().getValue()+ " " +connPoint.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName));
+					if (connPoint.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName)) {
+						
+						if (nodeName.equals(instanceName)) {
+							instanceConnPointsList.add(connPoint.getConnectionPointName().getValue());
+						}
+						if(connPoint.getVnfdInterfaceName() != null){
+							connPointsMap.put(connPoint.getConnectionPointName().getValue().split("\\.")[1], connPoint.getVnfdInterfaceName().getValue());
+						}
+						//System.out.println(connPointsMap);
+					}
+				}
+			}
+
+			if (connectionPointDSMap != null) {
+				for (ConnectionPoint connPointDS : connectionPointDSMap.values()) {
+					// System.out.println(nodeName+" "+connPointDS.getConnectionPointName().getValue()+ " " +connPointDS.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName));
+
+					if (connPointDS.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName)
+							&& !connPointsMap.containsKey(connPointDS.getConnectionPointName().getValue().split("\\.")[1])) {
+						
+						if (nodeName.equals(instanceName)) {
+							instanceConnPointsList.add(connPointDS.getConnectionPointName().getValue());
+						}
+						if(connPointDS.getVnfdInterfaceName() != null){
+							connPointsMap.put(connPointDS.getConnectionPointName().getValue().split("\\.")[1], connPointDS.getVnfdInterfaceName().getValue());
+						}
+						 //System.out.println(connPointsMap);
+					}
+
+				}
+			}
+		
+
+		if (!instanceConnPointsList.isEmpty()) {
+			instanceConnectionPointsMap.addAll(instanceConnPointsList);
+			System.out.println("[VNFDOperations] instanceConnectionPointsMap: "+ instanceConnectionPointsMap);
+		}
+		
+		if(!connPointsMap.isEmpty()){
+			nodeConnPointAuxMap.put(nodeName, connPointsMap);
+		}
+		}
+		return nodeConnPointAuxMap;
+	}
+	
+	public  List<String> getInstanceConnPoints(){
+		if (!instanceConnectionPointsMap.isEmpty()) {
+			return instanceConnectionPointsMap;
+		} else {
+			return null;
+		}
+	}
+	
+	public  Map<String, Map<String, String>> getNodeConnPoints(){
+		if (!nodeConnectionPointsMap.isEmpty()) {
+			return nodeConnectionPointsMap;
+		} else {
+			return null;
+		}
 	}
 }
-

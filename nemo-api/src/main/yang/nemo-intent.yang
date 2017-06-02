@@ -440,6 +440,12 @@ module nemo-intent {
                 mandatory true;
 
             }
+
+            leaf vnfd-style {
+                type string;
+                mandatory true;
+
+            }            
         }
 
         output {
@@ -470,4 +476,3 @@ module nemo-intent {
         }
     }
 }
-

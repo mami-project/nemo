@@ -1,0 +1,10 @@
+CREATE NodeModel j_vnf VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/ref22_vnfd.yaml; ConnectionPoint a at VNFD: mgmt; ConnectionPoint b at VNFD: west; ConnectionPoint c at VNFD: east;
+
+CREATE NodeModel sa_vnf VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/ref12_vnfd.yaml ; ConnectionPoint data_inside at VNFD: west; ConnectionPoint data_outside at VNFD: mgmt0; ConnectionPoint data_middle at VNFD: east;
+
+
+CREATE NodeModel dmz_vnf; Node sa56 Type j_vnf; ConnectionPoint inside; ConnectionPoint output; ConnectionPoint middle; Connection c1 Type p2p Endnodes inside, sa56.a ; Connection c2 Type p2p Endnodes sa56.b, output ; Connection c3 Type p2p Endnodes sa56.c, middle;
+
+CREATE NodeModel internet; Node dmz Type dmz_vnf;  Node sa3 Type sa_vnf; ConnectionPoint int_1; ConnectionPoint int_2; Connection c1 Type p2p Endnodes int_1 , dmz.inside; Connection c2 Type p2p Endnodes sa3.data_inside, dmz.output; Connection c3 Type p2p Endnodes sa3.data_outside, int_2; Connection c4 Type p2p Endnodes dmz.middle , sa3.data_middle;
+
+CREATE Node internet2 Type internet;
