@@ -366,8 +366,11 @@ public class VNFDGenerator {
 	public String setVnfdInternalConnections(Map<String, String> connPointVnfdInterfaceMap, String instanceName, String templateDefinitionName){
 		String errorInfo = null;
 		//First, replace VMName with the one allocated for the final VNFD
+		int i = 1;
 		for(String nodeName:vmSubstituteMap.keySet() ){
 			Map<String, Map<String,String>> ifaceDetailsMap= nodeNameTypeConnPointMap.get(nodeName);
+			
+					
 			for(Map<String,String> detailsMap: ifaceDetailsMap.values()){
 				String oldName= detailsMap.get("vnfc");
 				if (vmSubstituteMap.get(nodeName).get(oldName) != null){
@@ -383,6 +386,10 @@ public class VNFDGenerator {
 				Iterator<Map<String, Object>> itr = internalConnFromVNFDs.iterator();
 				while (itr.hasNext()) {
 					Map<String, Object> internalConnDescription = itr.next();
+					int index=+i;
+					String intConnNewName = "InternalConnection-"+index;
+					internalConnDescription.put("name", intConnNewName);
+					i++;
 					List<Map<String, String>> elements = (List<Map<String, String>>) internalConnDescription.get("elements");
 					for (Map<String, String> elementsMap : elements) {
 						String oldName = elementsMap.get("VNFC");
@@ -471,7 +478,7 @@ public class VNFDGenerator {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		//System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
-		String description = "\"Created by VIBNEMO translator from source "+instanceName+", template "+templateDefinitionName+" on "+ dateFormat.format(date)+"\"";
+		String description = "Created by VIBNEMO translator from source "+instanceName+", template "+templateDefinitionName+" on "+ dateFormat.format(date);
 		finalName = connName.replace(".", "-");
 		internalMap.put("name", finalName);
 		internalMap.put("description", description);
