@@ -8,9 +8,7 @@ CREATE NodeModel internet2; Node je2 Type j_vnf; Node qos Type q_vnf; Node daas 
 
 CREATE NodeModel dmz; Node int1 Type internet2; ConnectionPoint as; Connection c1 Type p2p Endnodes as , int1.inside;
 
-
-
-DELETE TemplateDefinition dmz;
+CREATE Node dmz2 Type dmz;
 
 
 
