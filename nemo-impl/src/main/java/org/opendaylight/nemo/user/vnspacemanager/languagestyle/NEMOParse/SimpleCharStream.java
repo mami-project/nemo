@@ -480,4 +480,3 @@ public class SimpleCharStream
 
 }
 /* JavaCC - OriginalChecksum=30c5475215f06e0e8e3c9ed22df2d210 (do not edit this line) */
-

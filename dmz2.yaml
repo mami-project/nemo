@@ -24,8 +24,8 @@ vnf:
     type: data
     VNFC: VirtualMachine-3
     local_iface_name: xe1
-    description: Created by VIBNEMO translator from source dmz2, template dmz on 2017/06/02
-      02:02:24
+    description: Created by VIBNEMO translator from source dmz2, template dmz on 2017/06/24
+      19:17:21
   VNFC:
   - name: VirtualMachine-1
     description: Dataplane VM1 with 4 threads, 2 GB hugepages, 2 SR-IOV interface

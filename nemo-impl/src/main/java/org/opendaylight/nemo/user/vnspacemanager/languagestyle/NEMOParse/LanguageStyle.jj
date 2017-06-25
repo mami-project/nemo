@@ -234,7 +234,7 @@ String DeleteIntent(UserId userId, DataBroker dataBroker, TenantManage tenantMan
  {
    return DeleteConnectionPoint(userId,dataBroker,tenantManage);
  }
-| <  TEMPLATEDEFINITION >
+| < NODEMODEL >
  {
    return DeleteTemplateDefinition(userId,dataBroker,tenantManage);
  }
@@ -841,18 +841,18 @@ String abstractConnectionPoint(UpdateTemplateDefinitionLang definition):
    }
   (
    <AT><VNFD><COLON>
-	(
+  (
     extInterfaceName = < TEMPID >
-   	{
-   	  	extInt=extInterfaceName.image;
-    	System.out.println(extInterfaceName.image);
-   	}
+    {
+        extInt=extInterfaceName.image;
+      System.out.println(extInterfaceName.image);
+    }
    | extInterfaceName = < ID >
       {
         extInt=extInterfaceName.image;
-    	System.out.println(extInterfaceName.image);
-   		}
- 	)
+      System.out.println(extInterfaceName.image);
+      }
+  )
   )?
   <SEMICOLON>
   {
@@ -883,8 +883,14 @@ String DeleteConnection(UserId userId, DataBroker dataBroker, TenantManage tenan
     DeleteConnectionLang deleteConnectionlang = new DeleteConnectionLang(dataBroker, tenantManage);   
 }
 {
+   (
   objConnNameToken = < ID >
+|
+  objConnNameToken = < TEMPID >
+)
+  
   < SEMICOLON >
+  
   {
     return deleteConnectionlang.DeleteConnectionHandling(userId, objConnNameToken.image);
   }
@@ -943,7 +949,7 @@ String DeleteConnectionPoint(UserId userId, DataBroker dataBroker, TenantManage 
   (
     objConnPointNameToken = < ID >
 |
-	objConnPointNameToken = < TEMPID >
+  objConnPointNameToken = < TEMPID >
   
   < SEMICOLON >
 )
@@ -961,7 +967,7 @@ String DeleteTemplateDefinition(UserId userId, DataBroker dataBroker, TenantMana
   (
     objTemplateDefinitionNameToken = < ID >
 |
-	objTemplateDefinitionNameToken = < TEMPID >
+  objTemplateDefinitionNameToken = < TEMPID >
 )
   < SEMICOLON >
   {
@@ -1227,4 +1233,3 @@ LinkedHashMap<String,String> nodeMultiProperty():
    return propertyvalue;
  }
 }
-

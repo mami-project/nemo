@@ -1,3 +1,4 @@
-DELETE ConnectionPoint qos.b;
+DELETE Node dmz2;
+
 
 
