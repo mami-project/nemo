@@ -1,0 +1,3 @@
+DELETE NodeModel node2_vnfd; 
+
+DELETE NodeModel node1_vnfd;

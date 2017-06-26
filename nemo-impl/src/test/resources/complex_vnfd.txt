@@ -1,0 +1,9 @@
+CREATE NodeModel node1_vnfd VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/dataplaneVNF1.yaml; ConnectionPoint xe0 at VNFD: xe0; ConnectionPoint xe1 at VNFD: xe1; ConnectionPoint xe2 at VNFD: xe2; ConnectionPoint xe3 at VNFD: xe3; ConnectionPoint mgmt at VNFD: eth0;
+
+CREATE NodeModel node2_vnfd VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/dataplaneVNF2.yaml; ConnectionPoint xe0 at VNFD: xe0; ConnectionPoint xe1 at VNFD: xe1; ConnectionPoint xe2 at VNFD: xe2; ConnectionPoint mgmt at VNFD: eth0; ConnectionPoint control at VNFD: eth1;  
+
+
+CREATE NodeModel node_complex; Node node1 Type node1_vnfd; Node node2 Type node2_vnfd; Node node3 Type node2_vnfd; ConnectionPoint mgmt; ConnectionPoint control2; ConnectionPoint mgmt2; ConnectionPoint control3; ConnectionPoint mgmt3; Connection dataconn1 Type p2p Endnodes node1.xe0 , node2.xe0; Connection dataconn2 Type p2p Endnodes node1.xe1 , node2.xe1;  Connection dataconn3 Type p2p Endnodes node1.xe2 , node3.xe0; Connection dataconn4 Type p2p Endnodes node1.xe3 , node3.xe1; Connection data_sriov1 Type p2p Endnodes node2.xe2 , node3.xe2;  Connection mgmt1 Type p2p Endnodes mgmt, node1.mgmt; Connection control1 Type p2p Endnodes control2, node2.control; Connection mgmt2 Type p2p Endnodes mgmt2, node2.mgmt; Connection mgmt3 Type p2p Endnodes mgmt3, node3.mgmt; Connection control2 Type p2p Endnodes control3, node3.control; 
+
+CREATE Node complex_vnfd Type node_complex;
+
