@@ -1,0 +1,54 @@
+vnfd:vnfd-catalog:
+    vnfd:
+    -   id: vlc_vnfd
+        name: vlc_vnfd
+        short-name: vlc_vnfd
+        description: Simple VNF example with a ubuntu with vlc 
+        vendor: OSM
+        version: '1.0'
+
+        # Place the logo as png in icons directory and provide the name here
+        logo: vlc_icon.png
+
+        # Management interface
+        mgmt-interface:
+            vdu-id: vlc_vnfd-VM
+
+        # Atleast one VDU need to be specified
+        vdu:
+        -   id: vlc_vnfd-VM
+            name: vlc_vnfd-VM
+            description: vlc_vnfd-VM
+            count: 1
+
+            # Flavour of the VM to be instantiated for the VDU
+            vm-flavor:
+                vcpu-count: 1
+                memory-mb: 512
+                storage-gb: 1
+
+            # Image/checksum or image including the full path
+            image: vlc_ubuntu
+            #checksum: 
+
+            external-interface:
+            # Specify the external interfaces
+            # There can be multiple interfaces defined
+            -   name: eth0
+                virtual-interface:
+                    type: OM-MGMT
+                    bandwidth: '0'
+                    vpci: 0000:00:0a.0
+                vnfd-connection-point-ref: eth0
+            -   name: mgmt
+                virtual-interface:
+                    type: OM-MGMT
+                    bandwidth: '0'
+                    vpci: 0000:00:0a.0
+                vnfd-connection-point-ref: mgmt
+
+        connection-point:
+            -   name: eth0
+                type: VPORT
+            -   name: mgmt
+                type: VPORT  
