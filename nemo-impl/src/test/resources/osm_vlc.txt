@@ -1,5 +1,7 @@
 CREATE NodeModel vlc_vnfd VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/vlc_vnf.yaml; ConnectionPoint eth0 at VNFD: eth0; ConnectionPoint mgmt at VNFD: mgmt;
 
-CREATE NodeModel vlc_complex; Node emitter Type vlc_vnfd; Node transcoder Type vlc_vnfd; ConnectionPoint  mgmt_tx; ConnectionPoint mgmt_trans; Connection data Type p2p Endnodes emitter.eth0, transcoder.eth0; Connection control1 Type p2p Endnodes emitter.mgmt, mgmt_tx; Connection control2 Type p2p Endnodes transcoder.mgmt, mgmt_trans;
+CREATE NodeModel vlc_vnfd_2 VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/vlc_vnf_2.yaml; ConnectionPoint eth1 at VNFD: eth1; ConnectionPoint mgmt1 at VNFD: mgmt1;
 
-CREATE Node vlc_vnfd Type vlc_complex;
+CREATE NodeModel vlc_complex; Node emitter Type vlc_vnfd; Node transcoder Type vlc_vnfd_2; ConnectionPoint  mgmt_tx; ConnectionPoint mgmt_trans; Connection data Type p2p Endnodes emitter.eth0, transcoder.eth1; Connection control1 Type p2p Endnodes emitter.mgmt, mgmt_tx; Connection control2 Type p2p Endnodes transcoder.mgmt1, mgmt_trans;
+
+CREATE Node vlc Type vlc_complex;
