@@ -60,9 +60,11 @@ public class UpdateTemplateDefinition {
     public String checkTemplateDefinition(UserId userId, TemplateDefinition templateDefinition){
         String errorInfo = null;
         Boolean templateDefined = false;
+        TemplateDefinition templateDefinitionStored = null;
 
         if (tenantManage.getTempalteDefinition(userId)!=null){
             if (tenantManage.getTempalteDefinition(userId).containsKey(templateDefinition.getTemplateName())){
+                templateDefinitionStored = tenantManage.getTempalteDefinition(userId).get(templateDefinition.getTemplateName());
                 templateDefined = true;
                 
             }
@@ -70,12 +72,19 @@ public class UpdateTemplateDefinition {
 
         if (tenantManage.getDefinitionDataStore(userId) !=null){
             if (tenantManage.getDefinitionDataStore(userId).containsKey(templateDefinition.getTemplateName())){
+                templateDefinitionStored= tenantManage.getDefinitionDataStore(userId).get(templateDefinition.getTemplateName());
                 templateDefined = true;
                 
             }
         }
         if (templateDefined){
-            return "The template " + templateDefinition.getTemplateName().getValue() + " has already been defined.";
+            errorInfo = checkTemplateDefinitionChanges(templateDefinition, templateDefinitionStored);
+            if(errorInfo != null){
+                return "Error|A different template with the same name " + templateDefinition.getTemplateName().getValue() + " has already been defined. Reason: "+errorInfo;
+            }else{
+                return "Warning|The same template " + templateDefinition.getTemplateName().getValue() + " has already been defined.";
+            }
+            
         }
         else {
             List<TemplateParameter> list = templateDefinition.getTemplateParameter();
@@ -477,6 +486,108 @@ public class UpdateTemplateDefinition {
 
        return null;
         
-    }        
+    } 
+
+    private String checkTemplateDefinitionChanges ( TemplateDefinition templateDefinition, TemplateDefinition templateDefinitionStored){
+         AbstractIntents abstractIntents = templateDefinition.getAbstractIntents();
+         AbstractIntents abstractIntentStored = templateDefinitionStored.getAbstractIntents();
+            if (abstractIntents.getAbstractObjects()!=null && abstractIntentStored.getAbstractObjects()!=null){
+                if(abstractIntents.getAbstractObjects().getAbstractNode() == null ^ abstractIntentStored.getAbstractObjects().getAbstractNode() ==null){
+                    return  "Nodes are not defined";
+                }else if (abstractIntents.getAbstractObjects().getAbstractNode()!=null && abstractIntentStored.getAbstractObjects().getAbstractNode()!=null){
+                    List<AbstractNode> nodeList = abstractIntents.getAbstractObjects().getAbstractNode();
+                    List<AbstractNode> nodeListStored = abstractIntentStored.getAbstractObjects().getAbstractNode();
+                    if(nodeList.size() != nodeListStored.size()){
+                        return "The number of abstractNodes defined does not match";
+                    } else{
+                        int nodeCounter = 0;
+                        for (int i = 0; i <= nodeList.size()-1; i++ ) {
+                            Boolean  nodeExists = false;
+                            for (int j = 0; j<= nodeListStored.size()-1; j++ ) {
+                                if (nodeList.get(i).getNodeName().getValue().equals(nodeListStored.get(j).getNodeName().getValue()) && nodeList.get(i).getNodeType().getValue().equals(nodeListStored.get(j).getNodeType().getValue())){
+                                    nodeExists=true;
+                                }
+                            }
+
+                            if(nodeExists){
+                                nodeCounter++;
+                            }
+                        }
+
+                        if(nodeCounter != nodeListStored.size()){
+                            return "There are one or more Nodes that does not match with the Nodes defined";
+                        }
+                    }
+                }
+
+                if(abstractIntents.getAbstractObjects().getAbstractConnectionPoint() == null ^ abstractIntentStored.getAbstractObjects().getAbstractConnectionPoint() == null){
+                    return  "ConnectionPoints are not defined";
+                }else if (abstractIntents.getAbstractObjects().getAbstractConnectionPoint()!=null && abstractIntentStored.getAbstractObjects().getAbstractConnectionPoint() !=null){
+                    List<AbstractConnectionPoint> connectionPointList = abstractIntents.getAbstractObjects().getAbstractConnectionPoint();
+                    List<AbstractConnectionPoint> connectionPointListStored = abstractIntentStored.getAbstractObjects().getAbstractConnectionPoint();
+                    if(connectionPointList.size() != connectionPointListStored.size()){
+                        return "The number of ConnectionPoints defined does not match";
+                    } else{
+                        int connPointCounter = 0;
+                        for (int i = 0; i <= connectionPointList.size()-1; i++ ) {
+                            Boolean  connPointExists = false;
+                            for (int j = 0; j<= connectionPointListStored.size()-1; j++ ) {
+                                if (connectionPointList.get(i).getConnectionPointName().getValue().equals(connectionPointListStored.get(j).getConnectionPointName().getValue()) ){
+                                    
+                                    if(connectionPointList.get(i).getVnfdInterfaceName() != null && connectionPointListStored.get(j).getVnfdInterfaceName() != null){
+                                        if(connectionPointList.get(i).getConnectionPointName().getValue().equals(connectionPointListStored.get(j).getConnectionPointName().getValue())){
+                                            connPointExists=true;
+                                        }
+                                    }
+                                    if(connectionPointList.get(i).getVnfdInterfaceName() == null && connectionPointListStored.get(j).getVnfdInterfaceName() == null){
+                                    connPointExists=true;
+                                    }
+                                }
+                            }
+
+                            if(connPointExists){
+                                connPointCounter++;
+                            }
+                        }
+
+                        if(connPointCounter != connectionPointListStored.size()){
+                            return "There are one or more ConnectionPoints that does not match with the ConnectionPoints defined";
+                        }
+                    }
+                }
+
+
+                if(abstractIntents.getAbstractObjects().getAbstractConnection() == null ^ abstractIntentStored.getAbstractObjects().getAbstractConnection() == null){
+                    return  "Connections are not defined";
+                }else if (abstractIntents.getAbstractObjects().getAbstractConnection()!=null && abstractIntentStored.getAbstractObjects().getAbstractConnection() !=null){
+                    List<AbstractConnection> connectionList = abstractIntents.getAbstractObjects().getAbstractConnection();
+                    List<AbstractConnection> connectionListStored = abstractIntentStored.getAbstractObjects().getAbstractConnection();
+                    if(connectionList.size() != connectionListStored.size()){
+                        return "The number of Connections defined does not match";
+                    } else{
+                
+                        int connectionCounter = 0;
+                        for (int i = 0; i <= connectionList.size()-1; i++ ) {
+                            Boolean  connExists = false;
+                            for (int j = 0; j<= connectionListStored.size()-1; j++ ) {
+                                if (connectionList.get(i).getConnectionName().getValue().equals(connectionListStored.get(j).getConnectionName().getValue()) && connectionList.get(i).getConnectionType().getValue().equals(connectionListStored.get(j).getConnectionType().getValue())){
+                                    connExists = true;
+                                }
+                            }
+
+                            if(connExists){
+                                connectionCounter++;
+                            }
+                        }
+
+                        if(connectionCounter != connectionListStored.size()){
+                            return "There are one or more Connections that does not match with the Connections defined";
+                        }
+                    }
+                }
+            }
+    return null;
+
+    }
 
 }

@@ -36,8 +36,12 @@ import java.util.concurrent.Future;
 
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.CommonRpcResult.ResultCode.Error;
 import static org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.CommonRpcResult.ResultCode.Ok;
+import static org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.intent.rev151010.CommonRpcResult.ResultCode.Warning;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 
 /**
  * Created by z00293636 on 2015/9/7.
@@ -64,6 +68,8 @@ public class UserManager implements NemoIntentService {
     Boolean transaction;
     Boolean informresolver;
     Boolean vnfdProcessing;
+    List<String> warningErrorList;
+
 
     public UserManager(DataBroker dataBroker0, IntentResolver intentResolver0){
         this.dataBroker = dataBroker0;
@@ -87,6 +93,8 @@ public class UserManager implements NemoIntentService {
         transaction = false;
         informresolver = false;
         vnfdProcessing = false;
+        warningErrorList = new LinkedList<String>();
+
     }
     @Override
     public Future<RpcResult<AdvancedNemoQueryOutput>> advancedNemoQuery(AdvancedNemoQueryInput input) {
@@ -181,7 +189,16 @@ public class UserManager implements NemoIntentService {
                     outputBuilder.setResultCode(Ok).setMessage(errorInfo);
                 }
                 else{
-                    outputBuilder.setResultCode(Error).setMessage(errorInfo);
+                    if(errorInfo.split("\\|")[0].equals("Warning")){
+                           outputBuilder.setResultCode(Warning).setMessage(errorInfo.split("\\|")[1]);
+                           warningErrorList.add("Warning");
+                    }else if(errorInfo.split("\\|")[0].equals("Error")){
+                           outputBuilder.setResultCode(Error).setMessage(errorInfo.split("\\|")[1]);
+                           warningErrorList.add("Error");
+                    }else{
+                        outputBuilder.setResultCode(Error).setMessage(errorInfo);
+                    }
+ 
                 }
             }
             else{
@@ -258,27 +275,35 @@ public class UserManager implements NemoIntentService {
         final CreateVnfdOutputBuilder outputBuilder = new CreateVnfdOutputBuilder();
         try {
         String errorInfo = null;
-        if(input.getVnfdStyle().equals("openmano")){
-        errorInfo = vnfdManager.generateVNFD(aaa, input);
-        }
-        if(input.getVnfdStyle().equals("osm")){
-            errorInfo = vnfdManagerOsm.generateVNFD(aaa, input);
-        }
-        if (errorInfo != null){
-            vnfdOperations.clear_vnfdOperations();
-            vnfdGenerator.clear_vnfdGenerator();
-            outputBuilder.setResultCode(Error).setMessage(errorInfo);
-            informresolver=false;
-            vnfdProcessing=false;
-        }
-        else{
-            vnfdOperations.clear_vnfdOperations();
-            vnfdGenerator.clear_vnfdGenerator();
-            outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+        if(warningErrorList.indexOf("Error") != -1){
             vnfdProcessing=true;
             informresolver=false;
+            outputBuilder.setResultCode(Error).setMessage("There are some errors while creating the intent so that the VNFD YAML won't be generated");
 
+        }else{
+            if(input.getVnfdStyle().equals("openmano")){
+                errorInfo = vnfdManager.generateVNFD(aaa, input);
+            }
+            if(input.getVnfdStyle().equals("osm")){
+                errorInfo = vnfdManagerOsm.generateVNFD(aaa, input);
+            }
+            if (errorInfo != null){
+                informresolver=false;
+                vnfdProcessing=true;
+                vnfdOperations.clear_vnfdOperations();
+                vnfdGenerator.clear_vnfdGenerator();
+                outputBuilder.setResultCode(Error).setMessage(errorInfo);
+            }
+            else{
+                vnfdOperations.clear_vnfdOperations();
+                vnfdGenerator.clear_vnfdGenerator();
+                vnfdProcessing=true;
+                informresolver=false;
+                outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+
+            }
         }
+
         }
         catch (IOException e){
             LOG.error("Exception:",e);

@@ -302,7 +302,7 @@ public class UpdateTemplateDefinitionLang {
         
         if (nodeModel){
             if (!subnodes.isEmpty()){
-                return "Subnodes should not be included in template instance.";
+                return "Error|Subnodes should not be included in template instance.";
             }
             else {
                 //return nodeModel;
@@ -325,14 +325,14 @@ public class UpdateTemplateDefinitionLang {
         List<EndNode> endNodeList = new LinkedList<EndNode>();
         String endNodeInstance = null;
         if (abstractNodes.isEmpty() && abstractConnectionPoints.isEmpty()){
-            return "There are not nodes or connectionPoints .";
+            return "Error|There are not nodes or connectionPoints .";
         }
         else {
             long order = 0L;
             for (String endNode : endnodes){
                 endNodeInstance= checkEndNodeInstance(userId, endNode);
                 if (!abstractNodes.containsKey(new NodeName(endNode)) && !abstractConnectionPoints.containsKey(new ConnectionPointName(endNode)) && !(endNodeInstance == null)){
-                    return "The endnode " + endNode + " does not exit. (UpdateTemplateDefinitionLang-createAbstractConnection)"+endNodeInstance;
+                    return "Error|The endnode " + endNode + " does not exit.";
                 }
                 else {
                     if (abstractNodes.containsKey(new NodeName(endNode)) ){
@@ -694,8 +694,8 @@ public class UpdateTemplateDefinitionLang {
             }
         }
         if (!endNodeExist && !endNode_connPointExist && !connPointExist && !connPointDSExist && !admin){
-            return "The endnode "+ endNodeName +" does not exist U(pdateTemplateDefinitionLang-checkEndNodeInstance);"+endNodeExist+" "+endNode_connPointExist+" "+connPointExist+" "+connPointDSExist+" "+admin+" "+connectionPointMap;
-            
+            //return "The endnode "+ endNodeName +" does not exist U(pdateTemplateDefinitionLang-checkEndNodeInstance);"+endNodeExist+" "+endNode_connPointExist+" "+connPointExist+" "+connPointDSExist+" "+admin+" "+connectionPointMap;
+            return "The endnode "+ endNodeName +" does not exist";
         }
         return null;
     }

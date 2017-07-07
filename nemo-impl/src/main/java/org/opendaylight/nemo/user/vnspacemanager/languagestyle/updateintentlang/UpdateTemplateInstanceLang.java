@@ -43,11 +43,14 @@ public class UpdateTemplateInstanceLang {
     public String templateInstanceLang(UserId userId, String nodeName, String nodeType, LinkedHashMap<String, LinkedHashMap<String,String>> propertyList){
         Boolean instanceExist = false;
         String objectId = null;
+        String instanceType = null;
         if (tenantManage.getTemplateInstance(userId)!=null){
             objectId = tenantManage.getObjectId(userId,nodeName);
             if (objectId != null){
                 if (tenantManage.getTemplateInstance(userId).containsKey(new TemplateInstanceId(objectId))){
                     instanceExist = true;
+                    TemplateInstance templateInstance = tenantManage.getTemplateInstance(userId).get(new TemplateInstanceId(objectId));
+                    instanceType = templateInstance.getTemplateName().getValue();
                 }
             }
         }
@@ -55,6 +58,8 @@ public class UpdateTemplateInstanceLang {
         if(tenantManage.getInstanceNameDataStore(userId) != null){
             if(tenantManage.getInstanceNameDataStore(userId).containsKey(new TemplateInstanceName(nodeName))){
                 instanceExist = true;
+                TemplateInstance templateInstance = tenantManage.getInstanceNameDataStore(userId).get(new TemplateInstanceName(nodeName));
+                instanceType = templateInstance.getTemplateName().getValue();
             }
         }
 
@@ -64,6 +69,7 @@ public class UpdateTemplateInstanceLang {
             for (TemplateInstance i: templateInstanceMap.values()){
                 if (i.getTemplateInstanceName().getValue().equals(nodeName)){
                     instanceExist = true;
+                    instanceType = i.getTemplateName().getValue();
                 }
             }
         }
@@ -123,7 +129,7 @@ public class UpdateTemplateInstanceLang {
                                 .setRangeValue(rangeValue);
                         parameterBuilder.setParameterValues(valuesBuilder.build());
                     }else {
-                        return "The value types are not consistent.";
+                        return "Error|The value types are not consistent.";
                     }
                     templateParameterList.add(parameterBuilder.build());
                 }
@@ -140,7 +146,14 @@ public class UpdateTemplateInstanceLang {
             }
         }
         else {
-            return "The instance " + nodeName + " exists.";
+            if (instanceType != null){
+                if (nodeType.equals(instanceType)){
+                    return "Warning|The instance " + nodeName + " exists.";
+                }else{
+                    return "Error|The instance " + nodeName + " exists.";
+                }
+            }
+            return "Error|The instance " + nodeName + " exists.";
         }
         return null;
     }

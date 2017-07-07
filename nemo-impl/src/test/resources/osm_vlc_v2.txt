@@ -1,0 +1,5 @@
+CREATE NodeModel vlc_vnfd VNFD file:///home/elena/Downloads/nemo4/nemo-impl/src/test/resources/vlc_vnf.yaml; ConnectionPoint eth0 at VNFD: eth0; ConnectionPoint mgmt at VNFD: mgmt;
+
+CREATE NodeModel vlc_complex; Node emitter Type vlc_vnfd; Node receiver Type vlc_vnfd; ConnectionPoint  mgmt_tx; ConnectionPoint mgmt_trans; Connection data Type p2p Endnodes emitter.eth0, receiver.eth0; Connection control1 Type p2p Endnodes emitter.mgmt, mgmt_tx; Connection control2 Type p2p Endnodes receiver.mgmt, mgmt_trans;
+
+CREATE Node video Type vlc_complex;

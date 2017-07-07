@@ -213,6 +213,10 @@ module nemo-intent {
                     description
                         "There's an error while executing the RPC";
                 }
+                enum warning {
+                    description
+                        "There's a warning while executing the RPC";
+                }
             }
         }
 
