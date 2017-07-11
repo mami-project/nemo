@@ -49,7 +49,7 @@ public class DeleteConnectionLang {
                 }
             }
         }
-            return "The connection " + connectionName + " does not exist.";
+            return "TError|he connection " + connectionName + " does not exist.";
         
     }
 }

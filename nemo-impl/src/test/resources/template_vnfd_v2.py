@@ -53,29 +53,6 @@ def register_template_definition(contHost, intent):
 	post(LANGUAGE_INTENT % contHost, data)
 	
 	
-
-def add_prop1_node(contHost):
-	data={
-			"input":{				 
-				  "user-id": "af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-				  "nemo-statement":
-					"CREATE NodeModel prop1; Node aux1 Type vnf_property Property vnfd-interface : ge1; ConnectionPoint inside at VNFD:q1; Connection c1 Type p2p Endnodes inside, aux1.data_inside;"
-				}
-		}
-	post(LANGUAGE_INTENT % contHost,data)
-
-def add_node(contHost):
-	data={
-			"input":{				 
-				  "user-id": "af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-				  "nemo-statement":
-					"CREATE Node merge Type prop1;"
-	
-				}
-	}
-	post(LANGUAGE_INTENT % contHost,data)
-
-
 def create_yaml(contHost, instance, path, style):
 	data={
 			"input":{
@@ -126,7 +103,7 @@ if __name__ == '__main__':
 			create_yaml(args.controller, instance, args.path, style)
 		except NameError: 
 			sys.exit("The instance's name: "+instance+" is not valid")
-	if args.osm:	
+	elif args.osm:	
 		try:
 			instance = raw_input("Introduce instance's name from which you want to generate the VNFD ")
 			print(args.path)
@@ -135,5 +112,11 @@ if __name__ == '__main__':
 		except NameError: 
 			sys.exit("The instance's name: "+instance+" is not valid")
 
-
+	else:
+		try:
+			instance = None
+			style= "null"
+			create_yaml(args.controller, instance, args.path, style)
+		except NameError: 
+			sys.exit("The instance's name: "+instance+" is not valid")
 	transaction_end_admin(args.controller)

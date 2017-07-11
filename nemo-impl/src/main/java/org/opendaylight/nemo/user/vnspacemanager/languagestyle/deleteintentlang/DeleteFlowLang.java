@@ -31,7 +31,7 @@ public class DeleteFlowLang {
             return deleteFlow.DeleteFlowHandling(userId,flowId);
         }
         else {
-            return "The flow " + flowname + " is not exist.";
+            return "Error|The flow " + flowname + " is not exist.";
         }
     }
 }

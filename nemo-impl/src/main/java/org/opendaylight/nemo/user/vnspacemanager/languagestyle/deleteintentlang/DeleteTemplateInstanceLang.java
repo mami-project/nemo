@@ -53,7 +53,7 @@ public class DeleteTemplateInstanceLang {
             }
         }
         
-            return "The instance" + templateInstanceName + " does not exist.";
+            return "Error|The instance" + templateInstanceName + " does not exist.";
         
     }
 }

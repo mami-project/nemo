@@ -1,3 +1,9 @@
-DELETE Node vlc_vnfd;
+DELETE NodeModel vlc_vnfd;
+
+DELETE NodeModel vlc_vnfd_2; 
+
+
 
 DELETE NodeModel vlc_complex;
+
+DELETE Node video;

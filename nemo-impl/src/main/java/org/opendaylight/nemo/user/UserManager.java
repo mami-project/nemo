@@ -274,35 +274,52 @@ public class UserManager implements NemoIntentService {
 
         final CreateVnfdOutputBuilder outputBuilder = new CreateVnfdOutputBuilder();
         try {
-        String errorInfo = null;
-        if(warningErrorList.indexOf("Error") != -1){
-            vnfdProcessing=true;
-            informresolver=false;
-            outputBuilder.setResultCode(Error).setMessage("There are some errors while creating the intent so that the VNFD YAML won't be generated");
-
-        }else{
-            if(input.getVnfdStyle().equals("openmano")){
-                errorInfo = vnfdManager.generateVNFD(aaa, input);
-            }
-            if(input.getVnfdStyle().equals("osm")){
-                errorInfo = vnfdManagerOsm.generateVNFD(aaa, input);
-            }
-            if (errorInfo != null){
-                informresolver=false;
-                vnfdProcessing=true;
-                vnfdOperations.clear_vnfdOperations();
-                vnfdGenerator.clear_vnfdGenerator();
-                outputBuilder.setResultCode(Error).setMessage(errorInfo);
-            }
-            else{
+            String errorInfo = null;
+            if(input.getVnfdStyle().equals("null")){
+                System.out.println("Inside null");
+                //System.out.println("warningErrorList: "+warningErrorList);
+                warningErrorList.clear();
+                //System.out.println("warningErrorList: "+warningErrorList);
                 vnfdOperations.clear_vnfdOperations();
                 vnfdGenerator.clear_vnfdGenerator();
                 vnfdProcessing=true;
                 informresolver=false;
-                outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+                outputBuilder.setResultCode(Ok).setMessage("No VNFD requested");
+            }else{
+                if(warningErrorList.indexOf("Error") != -1){
+                    //System.out.println("warningErrorList: "+warningErrorList);
+                    vnfdProcessing=true;
+                    informresolver=false;
+                    warningErrorList.clear();
+                    outputBuilder.setResultCode(Error).setMessage("There are some errors while creating the intent so that the VNFD YAML won't be generated");
 
+                }else{
+                    //System.out.println("warningErrorList: "+warningErrorList);
+                    warningErrorList.clear();
+                    //System.out.println("warningErrorList: "+warningErrorList);
+                    if(input.getVnfdStyle().equals("openmano")){
+                        errorInfo = vnfdManager.generateVNFD(aaa, input);
+                    }
+                    if(input.getVnfdStyle().equals("osm")){
+                        errorInfo = vnfdManagerOsm.generateVNFD(aaa, input);
+                    }
+                    if (errorInfo != null){
+                        informresolver=false;
+                        vnfdProcessing=true;
+                        vnfdOperations.clear_vnfdOperations();
+                        vnfdGenerator.clear_vnfdGenerator();
+                        outputBuilder.setResultCode(Error).setMessage(errorInfo);
+                    }
+                    else{
+                        vnfdOperations.clear_vnfdOperations();
+                        vnfdGenerator.clear_vnfdGenerator();
+                        vnfdProcessing=true;
+                        informresolver=false;
+                        outputBuilder.setResultCode(Ok).setMessage("The intent has been handled by VNFD Manager successfully.");
+
+                    }
+                }
             }
-        }
 
         }
         catch (IOException e){

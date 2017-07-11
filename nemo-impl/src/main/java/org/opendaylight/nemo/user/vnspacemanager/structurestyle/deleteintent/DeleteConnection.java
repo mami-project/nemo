@@ -47,7 +47,7 @@ public class DeleteConnection {
         }
 
         if (!connectionExist){
-            return "The connection instance "+connectionId.getValue()+ " does not exit.";
+            return "Error|The connection instance "+connectionId.getValue()+ " does not exit.";
         }
         else {
             if (tenantManage.getOperation(userId)!=null){

@@ -46,7 +46,7 @@ public class DeleteTemplateDefinitionLang {
 	            }
 	        }
 
-	         return "The templateDefinition " + definitionName + " does not exist.";
+	         return "Error|The templateDefinition " + definitionName + " does not exist.";
 	    }
 
 }

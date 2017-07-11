@@ -31,7 +31,7 @@ public class DeleteOperationLang {
             return deleteOperation.DeleteOperationhandling(userId,operationId);
         }
         else {
-            return "The operation " + operationname + " is not exist.";
+            return "Error|The operation " + operationname + " is not exist.";
         }
     }
 

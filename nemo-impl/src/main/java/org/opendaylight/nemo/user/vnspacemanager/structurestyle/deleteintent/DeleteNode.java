@@ -47,7 +47,7 @@ public class DeleteNode {
             }
         }
         if (!nodeExist){
-            return "The node instance " +nodeId.getValue()+" does not exist.";
+            return "Error|The node instance " +nodeId.getValue()+" does not exist.";
         }
         else {
             if (tenantManage.getConnection(userId)!=null){

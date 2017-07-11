@@ -37,6 +37,7 @@ import org.opendaylight.nemo.user.tenantmanager.TenantManage;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.nemo.common.rev151010.UserId;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import java.io.StringReader;
 
@@ -505,6 +506,11 @@ String NodeModel(UserId userId, DataBroker dataBroker, TenantManage tenantManage
   LinkedHashMap<String, String> parameters = new LinkedHashMap< String, String >();
   UpdateTemplateDefinitionLang definition = new UpdateTemplateDefinitionLang(dataBroker, tenantManage);
   String vnfUriLang=null;
+  List<String > nodeErrorList = new LinkedList<String>();
+  List<String > connErrorList = new LinkedList<String>();
+  List<String > connPointErrorList = new LinkedList<String>();
+  List<String > flowErrorList = new LinkedList<String>();
+  List<String > operationErrorList = new LinkedList<String>(); 
 }
 {
   nodeModelName = < ID >
@@ -545,22 +551,43 @@ String NodeModel(UserId userId, DataBroker dataBroker, TenantManage tenantManage
     < NODE >
     {
       strReturn = abstractNode(userId, definition);
+      if(strReturn !=null && !strReturn.split("\\|")[0].equals("Warning"))
+    {
+        return strReturn;
     }
+    }
+    
 |   < CONNECTION >
   {
     strReturn = abstractConnection(userId, definition);
+    if(strReturn !=null && !strReturn.split("\\|")[0].equals("Warning"))
+    {
+        return strReturn;
+    }
   }
 |   < FLOW >
   {
     strReturn = abstractFlow(definition);
+    if(strReturn !=null && !strReturn.split("\\|")[0].equals("Warning"))
+    {
+        return strReturn;
+    }
   }
 |   < OPERATION >
   {
     strReturn = abstractOperation(definition);
+    if(strReturn !=null && !strReturn.split("\\|")[0].equals("Warning"))
+    {
+        return strReturn;
+    }
   }
 |  <CONNECTIONPOINT>
   {
     strReturn= abstractConnectionPoint(definition);
+    if(strReturn !=null && !strReturn.split("\\|")[0].equals("Warning"))
+    {
+        return strReturn;
+    }
   }
 )*
   {

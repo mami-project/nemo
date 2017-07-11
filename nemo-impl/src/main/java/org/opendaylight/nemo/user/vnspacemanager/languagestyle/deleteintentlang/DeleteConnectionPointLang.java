@@ -54,7 +54,7 @@ public class DeleteConnectionPointLang {
             }
         }
         
-        return "The connectionPoint" + connPointName + " does not exist.";
+        return "Error|The connectionPoint" + connPointName + " does not exist.";
        
     }
 

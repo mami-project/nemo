@@ -41,7 +41,7 @@ public class DeleteOperation {
             }
         }
         if (!operationExist){
-            return "The operation instance " +operationId.getValue()+" is not exist.";
+            return "Error|The operation instance " +operationId.getValue()+" is not exist.";
         }
         return null;
     }

@@ -76,7 +76,7 @@ public class DeleteTemplateDefinition {
 		}
 
 		if (!templateExist) {
-			return "The template definition " + templateName.getValue() + " does not exist.";
+			return "Error|The template definition " + templateName.getValue() + " does not exist.";
 		} else {
 			List<String> abstNodeNameList = new LinkedList<String>();
 			// Deleting: First level of abstraction

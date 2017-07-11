@@ -34,36 +34,36 @@ public class DeleteConnectionPoint {
 	        if (tenantManage.getConnectionPoint(userId)!=null){
 	            if (tenantManage.getConnectionPoint(userId).containsKey(connectionPointId)){
 	                connPointExist = true;	
-			System.out.println("eliminado connPoint"+ connectionPointId);
+			//System.out.println("Deleting connPoint"+ connectionPointId);
 	                tenantManage.getConnectionPoint(userId).remove(connectionPointId);
 	                tenantManage.getUserNameIdMap(userId).remove(tenantManage.getName(userId,connectionPointId.getValue()));
-			System.out.println("eliminado connPoint: ConnectionPointMap"+ tenantManage.getConnectionPoint(userId));
+			//System.out.println("Deleting connPoint: ConnectionPointMap"+ tenantManage.getConnectionPoint(userId));
 	            }
 	        }
 	        if (tenantManage.getConnectionPointDataStore(userId)!=null){
 	            if (tenantManage.getConnectionPointDataStore(userId).containsKey(connectionPointId)){
 	                connPointExist = true;
-			System.out.println("eliminado connPointDS"+ connectionPointId);
+			//System.out.println("Deleting connPointDS"+ connectionPointId);
 	                tenantManage.setUserDeleteIntent(userId, NEMOConstants.connectionPoint,connectionPointId.getValue());
 	                tenantManage.getUserNameIdMap(userId).remove(tenantManage.getName(userId,connectionPointId.getValue()));
-			System.out.println("eliminado connPoint: ConnectionPointMap"+ tenantManage.getConnectionPointDataStore(userId));
+			//System.out.println("Deleting connPoint: ConnectionPointMap"+ tenantManage.getConnectionPointDataStore(userId));
 	            }
 	        }
 	        if (!connPointExist){
-	            return "The connectionPoint instance " +connectionPointId.getValue()+" does not exist.";
+	            return "Error|The connectionPoint instance " +connectionPointId.getValue()+" does not exist.";
 	        }
 	        else {
 			List<ConnectionId> deleteConnection = new ArrayList<ConnectionId>();
 	            if (tenantManage.getConnection(userId)!=null){
-	            	System.out.println("Entra getConnection");
+	            	//System.out.println("Inside getConnection");
 			
 	                for (Connection connection : tenantManage.getConnection(userId).values()){
 	                    List<EndNode> endNodeList = connection.getEndNode();
 	                    for (EndNode endNode :endNodeList){
-	                    	System.out.println("EndnodeId: " +endNode.getNodeId());
-	                    	System.out.println("connectionPointId: " +connectionPointId);
+	                    	//System.out.println("EndnodeId: " +endNode.getNodeId());
+	                    	//System.out.println("connectionPointId: " +connectionPointId);
 	                        if (endNode.getNodeId().getValue().equals(connectionPointId.getValue())){
-	                        	System.out.println("Coincide nodeId connectionId");
+	                        	//System.out.println("Match nodeId connectionId");
 					deleteConnection.add(connection.getConnectionId());
 	                            break;
 	                        }
@@ -81,10 +81,10 @@ public class DeleteConnectionPoint {
 	                for (Connection connection : tenantManage.getConnectionDataStore(userId).values()){
 	                    List<EndNode> endNodeList = connection.getEndNode();
 	                    for (EndNode endNode :endNodeList){
-	                    	System.out.println("EndnodeIdDS: " +endNode.getNodeId());
-	                    	System.out.println("connectionPointIdDS: " +connectionPointId);
+	                    	//System.out.println("EndnodeIdDS: " +endNode.getNodeId());
+	                    	//System.out.println("connectionPointIdDS: " +connectionPointId);
 	                        if (endNode.getNodeId().getValue().equals(connectionPointId.getValue())){
-	                        	System.out.println("Coincide nodeId connectionId");
+	                        	//System.out.println("Match nodeId connectionId");
 					deleteConnection.add(connection.getConnectionId());
 	                            break;
 	                        }

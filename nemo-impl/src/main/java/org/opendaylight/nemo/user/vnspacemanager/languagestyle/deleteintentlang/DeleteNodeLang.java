@@ -95,6 +95,6 @@ public class DeleteNodeLang {
         	}
         }
  
-         return "The node " + nodename + " does not exist.";
+         return "Error|The node " + nodename + " does not exist.";
     }
 }

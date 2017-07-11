@@ -66,7 +66,7 @@ public class DeleteTemplateInstance {
             }
         }
         if (!instanceExist){
-            return "The instance " +templateInstanceId.getValue()+" does not exist.";
+            return "Error|The instance " +templateInstanceId.getValue()+" does not exist.";
         }else{
         	erroInfo = nodeInstanceHandling(userId, instanceName);
         	if (erroInfo != null){
@@ -143,11 +143,11 @@ public class DeleteTemplateInstance {
 		if(tenantManage.getConnectionPoint(userId) != null){
 			
 			connPointMap = tenantManage.getConnectionPoint(userId);
-			System.out.println("[connPointInstanceHandling]connPointMap: "+connPointMap);
+			//System.out.println("[connPointInstanceHandling]connPointMap: "+connPointMap);
 			for(ConnectionPoint n: connPointMap.values()){
 				if(n.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName)){
-					System.out.println("[connPointInstanceHandling]NodeName:"+nodeName);
-					System.out.println("[connPointInstanceHandling]ConnectionPointName:"+n.getConnectionPointName());
+					//System.out.println("[connPointInstanceHandling]NodeName:"+nodeName);
+					//System.out.println("[connPointInstanceHandling]ConnectionPointName:"+n.getConnectionPointName());
 					deleteCnnPointList.add( n.getConnectionPointId());
 				}
 				
@@ -156,7 +156,7 @@ public class DeleteTemplateInstance {
 				Iterator<ConnectionPointId> itr = deleteCnnPointList.iterator();
 				while(itr.hasNext()){
 					ConnectionPointId delete = itr.next();
-					System.out.println("[connPointInstanceHandling]ConnectionPointDelete:"+delete);
+					//System.out.println("[connPointInstanceHandling]ConnectionPointDelete:"+delete);
 					erroInfo = deleteConnPoint.DeleteConnectionPointHandling(userId, delete);
 					if(erroInfo != null){
 						return erroInfo;
@@ -171,8 +171,8 @@ public class DeleteTemplateInstance {
 			connPointMapDS= tenantManage.getConnectionPointDataStore(userId);
 			for(ConnectionPoint c: connPointMapDS.values()){
 				if(c.getConnectionPointName().getValue().split("\\.")[0].equals(nodeName)){
-					System.out.println("[connPointInstanceHandling]NodeName:"+nodeName);
-					System.out.println("[connPointInstanceHandling]ConnectionPointNameDS:"+c.getConnectionPointName());
+					//System.out.println("[connPointInstanceHandling]NodeName:"+nodeName);
+					//System.out.println("[connPointInstanceHandling]ConnectionPointNameDS:"+c.getConnectionPointName());
 					deleteCnnPointList.add( c.getConnectionPointId());
 				}
 				
@@ -181,7 +181,7 @@ public class DeleteTemplateInstance {
 				Iterator<ConnectionPointId> itr = deleteCnnPointList.iterator();
 				while(itr.hasNext()){
 					ConnectionPointId delete = itr.next();
-					System.out.println("[connPointInstanceHandling]ConnectionPointDelete:"+delete);
+					//System.out.println("[connPointInstanceHandling]ConnectionPointDelete:"+delete);
 					erroInfo = deleteConnPoint.DeleteConnectionPointHandling(userId, delete);
 					if(erroInfo != null){
 						return erroInfo;
@@ -200,11 +200,11 @@ private String connectionInstanceHandling(UserId userId, String nodeName){
 		if(tenantManage.getConnection(userId) != null){
 			
 			connectionMap = tenantManage.getConnection(userId);
-			System.out.println("[connectionInstanceHandling]connectionMap: "+connectionMap);
+			//System.out.println("[connectionInstanceHandling]connectionMap: "+connectionMap);
 			for(Connection n: connectionMap.values()){
 				if(n.getConnectionName().getValue().split("\\.")[0].equals(nodeName)){
-					System.out.println("[connectionInstanceHandling]NodeName:"+nodeName);
-					System.out.println("[connectionInstanceHandling]ConnectionName:"+n.getConnectionName());
+					//System.out.println("[connectionInstanceHandling]NodeName:"+nodeName);
+					//System.out.println("[connectionInstanceHandling]ConnectionName:"+n.getConnectionName());
 					deleteConnectionList.add( n.getConnectionId());
 				}
 				
@@ -213,7 +213,7 @@ private String connectionInstanceHandling(UserId userId, String nodeName){
 				Iterator<ConnectionId> itr = deleteConnectionList.iterator();
 				while(itr.hasNext()){
 					ConnectionId delete = itr.next();
-					System.out.println("[connPointInstanceHandling]ConnectionDelete:"+delete);
+					//System.out.println("[connPointInstanceHandling]ConnectionDelete:"+delete);
 					erroInfo = deleteConnection.DeleteConnectionHandling(userId, delete);
 					if(erroInfo != null){
 						return erroInfo;
@@ -229,8 +229,8 @@ private String connectionInstanceHandling(UserId userId, String nodeName){
 			connectionMapDS= tenantManage.getConnectionDataStore(userId);
 			for(Connection c: connectionMapDS.values()){
 				if(c.getConnectionName().getValue().split("\\.")[0].equals(nodeName)){
-					System.out.println("[connectionInstanceHandling]NodeName:"+nodeName);
-					System.out.println("[connectionInstanceHandling]ConnectionNameDS:"+c.getConnectionName());
+					//System.out.println("[connectionInstanceHandling]NodeName:"+nodeName);
+					//System.out.println("[connectionInstanceHandling]ConnectionNameDS:"+c.getConnectionName());
 					deleteConnectionList.add( c.getConnectionId());
 				}
 				
@@ -239,7 +239,7 @@ private String connectionInstanceHandling(UserId userId, String nodeName){
 				Iterator<ConnectionId> itr = deleteConnectionList.iterator();
 				while(itr.hasNext()){
 					ConnectionId delete = itr.next();
-					System.out.println("[connectionInstanceHandling]ConnectionDelete:"+delete);
+					//System.out.println("[connectionInstanceHandling]ConnectionDelete:"+delete);
 					erroInfo = deleteConnection.DeleteConnectionHandling(userId, delete);
 					if(erroInfo != null){
 						return erroInfo;
