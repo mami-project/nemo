@@ -1,6 +1,6 @@
 # Intent based VNF descriptor compiler for ODL
 
-This project started as a fork of https://gitgub.com/telefonicaid/vibnemo . It contains all the development files to implement a compiler for Virtual Network Functions (VNFs) based on the IRTF draft on [High-level VND Descriptors using NEMO](https://datatracker.ietf.org/doc/draft-aranda-nfvrg-recursive-vnf/) .
+This project started as a fork of https://gitgub.com/telefonicaid/vibnemo . It contains all the development files to implement a compiler for Virtual Network Functions (VNFs) based on the IETF draft on [High-level VND Descriptors using NEMO](https://datatracker.ietf.org/doc/draft-aranda-nfvrg-recursive-vnf/) .
 
 ## Dependencies ##
 
