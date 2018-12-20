@@ -9,13 +9,13 @@ This project started as a fork of https://gitgub.com/telefonicaid/vibnemo . It c
   * Java 1.8
      ```
      sudo add-apt-repository ppa:webupd8team/java
-     sudo add-apt-get install oracle-java8-installer
+     sudo apt-get install oracle-java8-installer
      ```
   * Apache Maven 3.5.4
      ```
      sudo apt-get install maven
      ```
-  * Python 2.7
+  * Python 3.6
      
 ### Installation
 
@@ -78,13 +78,9 @@ This project started as a fork of https://gitgub.com/telefonicaid/vibnemo . It c
     ```
   * Run demo
     ```
-    python config.py
-    python demo.py --osm
+    python3 config.py
+    python3 demo.py --intent intent.txt --instance video --style osm
     ```  
-    ```
-    intent path: intent.txt
-    instance name: video
-    ```
   * *video_vnfd.yaml* has been generated
     
       

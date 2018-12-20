@@ -1,122 +1,124 @@
-#!/usr/bin/python
-#Filename:servicechain.py
+#!/usr/bin/python3
 import requests,json
 import argparse, sys
 import os
 from requests.auth import HTTPBasicAuth
 
 
-USERNAME='admin'
-PASSWORD='admin'
+USERNAME = 'admin'
+PASSWORD = 'admin'
+USER_ID = 'af4fc2be-e3f4-4388-a8ef-3aabae872f2a'
 
-TRANSACTION_BEGIN="http://%s:8181/restconf/operations/nemo-intent:begin-transaction"
-TRANSACTION_END="http://%s:8181/restconf/operations/nemo-intent:end-transaction"
-REGISTER_USER="http://%s:8181/restconf/operations/nemo-intent:register-user"
-LANGUAGE_INTENT="http://%s:8181/restconf/operations/nemo-intent:language-style-nemo-request"
-GENERATE_YAML="http://%s:8181/restconf/operations/nemo-intent:create-vnfd"	
+API = '/restconf/operations/nemo-intent:'
+controller = ""
+port = ""
+
+TRANSACTION_BEGIN = 'begin-transaction'
+TRANSACTION_END = 'end-transaction'
+REGISTER_USER = 'register-user'
+LANGUAGE_INTENT = 'language-style-nemo-request'
+GENERATE_YAML = 'create-vnfd'      
 
 
-def register_admin(contHost):
-	data={
-			"input":{
-					"user-id":"af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-					"user-name":"admin",
-					"user-password":"abcd",
-					"user-role":"admin"
-					}
-		}
-	post(REGISTER_USER % contHost, data)
+def register_admin():
+    data={
+        "input":{
+            "user-id": USER_ID,
+            "user-name": USERNAME,
+            "user-password": PASSWORD,
+            "user-role": "admin"
+        }
+    }
+    post(REGISTER_USER, data)
 
-def transaction_begin_admin(contHost):
-	data={
-			"input":{
-					"user-id":"af4fc2be-e3f4-4388-a8ef-3aabae872f2a"				
-					}
-		}
-	post(TRANSACTION_BEGIN % contHost, data)
-	
-def transaction_end_admin(contHost):
-	data={
-			"input":{
-					"user-id":"af4fc2be-e3f4-4388-a8ef-3aabae872f2a"				
-					}
-		}
-	post(TRANSACTION_END % contHost, data)
-	
-def register_template_definition(contHost, intent):
-	data={
-			"input":{
-			  "user-id": "af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-			  "nemo-statement": intent
-			}
-		}
-	post(LANGUAGE_INTENT % contHost, data)
-	
-	
-def create_yaml(contHost, instance, path, style):
-	data={
-			"input":{
-					"user-id":"af4fc2be-e3f4-4388-a8ef-3aabae872f2a",
-					"instance-name":instance,
-					"results-path":path,
-					"vnfd-style":style			
-					}
-		}
-	post(GENERATE_YAML % contHost, data)
+def transaction_begin_admin():
+    data={
+        "input":{
+            "user-id": USER_ID                                
+        }
+    }
+    post(TRANSACTION_BEGIN, data)
+        
+def transaction_end_admin():
+    data={
+        "input":{
+            "user-id": USER_ID                                
+        }
+    }
+    post(TRANSACTION_END, data)
+        
+def register_template_definition(intent):
+    data={
+        "input":{
+            "user-id": USER_ID,
+            "nemo-statement": intent
+        }
+    }
+    post(LANGUAGE_INTENT, data)
+        
+        
+def create_yaml(instance, path, style):
+    data={
+        "input":{
+            "user-id": USER_ID,
+            "instance-name": instance,
+            "results-path": path,
+            "vnfd-style": style                      
+        }
+    }
+    post(GENERATE_YAML, data)
 
-def post(url, data):
-    headers = {'Content-type': 'application/yang.data+json',
-               'Accept': 'application/yang.data+json'}
-    print "POST %s" % url
-    print json.dumps(data, indent=4, sort_keys=True)
-    r = requests.post(url, data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(USERNAME, PASSWORD))
-    print r.text
+def post(endpoint, data):
+    headers = { 'Content-type': 'application/yang.data+json',
+                'Accept': 'application/yang.data+json'}
+    print("POST %s", get_url(endpoint))
+    print(json.dumps(data, indent=4, sort_keys=True))
+    r = requests.post(get_url(endpoint), data=json.dumps(data), headers=headers, auth=HTTPBasicAuth(USERNAME, PASSWORD))
+    print(r.text)
     r.raise_for_status()
-	
+
+def get_url(endpoint):
+    return 'http://' + controller + ':' + port + API + endpoint
+    
+        
 if __name__ == '__main__':
 
-	path_result_default=os.getcwd()
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--controller', default='127.0.0.1', help='controller IP')
-	parser.add_argument('-p', '--path', default=path_result_default, help='Destination path where the VNF Descriptor will be saved')
-	parser.add_argument("-om", "--openmano", help="Generate OpenMANO VNFD", action="store_true")
-	parser.add_argument("-os", "--osm", help="Generate OSM VNFD", action="store_true")
-	args=parser.parse_args()
-	
-	try:
-		path = raw_input("Introduce the path of your intent ")
-		print path
-		f = open(path, 'r')
-		register_admin(args.controller)
-		transaction_begin_admin(args.controller)
-		for line in f:
-			if(line != "\n"):
-				register_template_definition(args.controller, line.split("\n")[0])
-	except IOError: 
-		sys.exit("The path introduced: "+path+" is incorrect")
+    path_result_default=os.getcwd()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--intent', dest='intent', help='Path of your intent', required=True)
+    parser.add_argument('--instance', dest='instance', help='Instance\'s name from which you want to generate the VNFD', required=True)
+    parser.add_argument('--style', dest='style', choices={'osm', 'openmano'}, help='Choose VNFD style between osm and openmano', required=True)
+    parser.add_argument('--path', dest='path', default=path_result_default, help='Destination path where the VNF Descriptor will be saved')
+    parser.add_argument('--controller', dest='controller', default='127.0.0.1', help='Controller IP')
+    parser.add_argument('--port', dest='port', default='8181', help='Controller port')
+    args=parser.parse_args()
 
-	if args.openmano:	
-		try:
-			instance = raw_input("Introduce instance's name from which you want to generate the VNFD ")
-			print(args.path)
-			style = "openmano"
-			create_yaml(args.controller, instance, args.path, style)
-		except NameError: 
-			sys.exit("The instance's name: "+instance+" is not valid")
-	elif args.osm:	
-		try:
-			instance = raw_input("Introduce instance's name from which you want to generate the VNFD ")
-			print(args.path)
-			style = "osm"
-			create_yaml(args.controller, instance, args.path, style)
-		except NameError: 
-			sys.exit("The instance's name: "+instance+" is not valid")
+    controller = args.controller
+    port = args.port
 
-	else:
-		try:
-			instance = None
-			style= "null"
-			create_yaml(args.controller, instance, args.path, style)
-		except NameError: 
-			sys.exit("The instance's name: "+instance+" is not valid")
-	transaction_end_admin(args.controller)
+    try:
+        register_admin()
+    except Exception:
+        sys.exit('Register Admin ERROR')
+
+    try:
+        transaction_begin_admin()
+    except Exception:
+        sys.exit('Transaction Begin ERROR')
+
+    try:
+        f = open(args.intent, 'r')
+        for line in f:
+            if(line != "\n"):
+                register_template_definition(line.split("\n")[0])
+    except IOError: 
+        transaction_end_admin()
+        sys.exit("The path introduced: " + args.intent + " is incorrect")
+
+    try:
+        create_yaml(args.instance, args.path, args.style)
+    except NameError: 
+        transaction_end_admin()
+        sys.exit("The instance's name: " + args.instance + " is not valid")
+        
+    transaction_end_admin()
