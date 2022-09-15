@@ -98,7 +98,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
   <dependency>
     <groupId>org.yaml</groupId>
     <artifactId>snakeyaml</artifactId>
-    <version>1.31</version>
+    <version>[1.32,)</version>
   </dependency>
 <dependency>
   <groupId>com.fasterxml.jackson.dataformat</groupId>
